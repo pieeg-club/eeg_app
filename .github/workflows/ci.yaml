@@ -1,0 +1,38 @@
+name: ci
+
+on:
+    pull_request:
+      branches: [main, dev]
+
+jobs:
+    tests:
+        name: Tests
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
+
+            - name: Read Flutter version from .fvmrc
+              id: flutter_version
+              run: |
+                version=$(cat .fvmrc | jq -r '.flutter')
+                echo "version=$version" >> $GITHUB_OUTPUT
+            
+            - name: Set up Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                channel: stable
+                flutter-version: ${{ steps.flutter_version.outputs.version }}
+            
+            - name: Install Dependencies
+              run: flutter pub get
+
+            - name: Check Code Formatting
+              run: flutter format --set-exit-if-changed .
+
+            - name: Analyze
+              run: flutter analyze
+            
+            - name: Test
+              run: flutter test
