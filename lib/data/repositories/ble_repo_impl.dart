@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/domain/failures/device_failures.dart';
@@ -16,17 +17,20 @@ class BleDeviceImpl implements DeviceRepo {
   @override
   Future<Either<DeviceFailure, Unit>> connect() async {
     if (_connectedDevice != null) {
+      log('Device already connected', stackTrace: StackTrace.current);
       return left(DeviceFailure.failedToConnect(StackTrace.current));
     }
     final BluetoothDevice device;
     try {
       device = await _scanForDevice(_platformName);
     } catch (e, s) {
+      log('Failed to scan for device', error: e, stackTrace: s);
       return left(DeviceFailure.failedToConnect(s));
     }
     try {
       await device.connect();
     } catch (e, s) {
+      log('Failed to connect to device', error: e, stackTrace: s);
       return left(DeviceFailure.failedToConnect(s));
     }
     _connectedDevice = device;
@@ -40,6 +44,7 @@ class BleDeviceImpl implements DeviceRepo {
   @override
   Future<Either<DeviceFailure, Unit>> disconnect() async {
     if (_connectedDevice == null) {
+      log('Device not connected', stackTrace: StackTrace.current);
       return left(DeviceFailure.unconnectedDevice(StackTrace.current));
     }
     await _connectedDevice!.disconnect();
@@ -50,6 +55,7 @@ class BleDeviceImpl implements DeviceRepo {
   @override
   Either<DeviceFailure, Stream<List<int>>> getDataStream() {
     if (_dataStream == null) {
+      log('No data stream available', stackTrace: StackTrace.current);
       return left(DeviceFailure.noDataStream(StackTrace.current));
     }
     return right(_dataStream!);
