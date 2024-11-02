@@ -41,6 +41,8 @@ dependencies:
   equatable: ^2.0.5
   flutter_blue_plus: ^1.33.6
   dartz: ^0.10.1
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +55,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
   very_good_analysis: ^6.0.0
+  riverpod_generator: ^2.6.2
+  build_runner: ^2.4.13
+  custom_lint: ^0.7.0
+  riverpod_lint: ^2.6.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

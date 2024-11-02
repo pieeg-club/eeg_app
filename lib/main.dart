@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
+/// This is the main application widget.
 class MyApp extends StatelessWidget {
+  /// The main application widget constructor.
   const MyApp({super.key});
 
   // This widget is the root of your application.
