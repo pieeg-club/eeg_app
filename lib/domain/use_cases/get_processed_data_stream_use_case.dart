@@ -17,20 +17,23 @@ class GetProcessedDataStreamUseCase
     final dataStreamResult = _deviceRepo.getDataStream();
 
     // Handle the Either result
-    return Future.value(dataStreamResult.fold(
-      (failure) {
-        // If there's a failure, return an empty stream wrapped in Right
-        return const Right(Stream<List<List<double>>>.empty());
-      },
-      (dataStream) {
-        // Process the data stream
-        final processedDataStream = dataStream.map((data) {
-          return [data.map((e) => e.toDouble()).toList()];
-        });
+    return Future.value(
+      dataStreamResult.fold(
+        (failure) {
+          // If there's a failure, return an empty stream wrapped in Right
+          return const Right(Stream<List<List<double>>>.empty());
+        },
+        (dataStream) {
+          // Process the data stream
+          final processedDataStream =
+              dataStream.map<List<List<double>>>((data) {
+            return [data.map((e) => e.toDouble()).toList()];
+          });
 
-        // Return the processed data stream wrapped in Right
-        return Right(processedDataStream);
-      },
-    ));
+          // Return the processed data stream wrapped in Right
+          return Right(processedDataStream);
+        },
+      ),
+    );
   }
 }

@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 ///
 /// [ResultType] is the type of the result produced by the use case.
 /// [Params] is the type of the parameters required to execute the use case.
+// ignore: one_member_abstracts
 abstract class UseCase<ResultType, Params> {
   /// Executes the use case with the given [params].
   ///

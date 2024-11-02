@@ -18,10 +18,13 @@
 /// - `message`: A string containing details about the failure.
 abstract class Failure {
   /// Constructs a [Failure] with the given message.
-  const Failure(this.message);
+  const Failure(this.message, this.stackTrace);
 
   /// A string containing details about the failure.
   final String message;
+
+  /// A stack trace that provides information about where the failure occurred.
+  final StackTrace stackTrace;
 
   @override
   String toString() => message;

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/domain/failures/device_failures.dart';
 import 'package:eeg_app/domain/repositories/device_repo.dart';
@@ -14,16 +16,18 @@ class BleDeviceImpl implements DeviceRepo {
   @override
   Future<Either<DeviceFailure, Unit>> connect() async {
     if (_connectedDevice != null) {
-      return left(DeviceFailure.failedToConnect());
+      return left(DeviceFailure.failedToConnect(StackTrace.current));
     }
-    final device = await _scanForDevice(_platformName);
-    if (device == null) {
-      return left(DeviceFailure.failedToConnect());
+    final BluetoothDevice device;
+    try {
+      device = await _scanForDevice(_platformName);
+    } catch (e, s) {
+      return left(DeviceFailure.failedToConnect(s));
     }
     try {
       await device.connect();
-    } catch (e) {
-      return left(DeviceFailure.failedToConnect());
+    } catch (e, s) {
+      return left(DeviceFailure.failedToConnect(s));
     }
     _connectedDevice = device;
     _dataStream = await _dataStreamFromDevice(
@@ -36,7 +40,7 @@ class BleDeviceImpl implements DeviceRepo {
   @override
   Future<Either<DeviceFailure, Unit>> disconnect() async {
     if (_connectedDevice == null) {
-      return left(DeviceFailure.unconnectedDevice());
+      return left(DeviceFailure.unconnectedDevice(StackTrace.current));
     }
     await _connectedDevice!.disconnect();
     _connectedDevice = null;
@@ -46,17 +50,20 @@ class BleDeviceImpl implements DeviceRepo {
   @override
   Either<DeviceFailure, Stream<List<int>>> getDataStream() {
     if (_dataStream == null) {
-      return left(DeviceFailure.noDataStream());
+      return left(DeviceFailure.noDataStream(StackTrace.current));
     }
     return right(_dataStream!);
   }
 
-  Future<BluetoothDevice?> _scanForDevice(String platformName) async {
-    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 5));
-    final device = await FlutterBluePlus.onScanResults.firstWhere(
-      (result) => result.last.device.platformName == platformName,
-    );
-    return device.first.device;
+  Future<BluetoothDevice> _scanForDevice(String platformName) async {
+    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 10));
+    final devices = await Future.any<List<ScanResult>?>([
+      FlutterBluePlus.onScanResults.firstWhere(
+        (result) => result.any((r) => r.device.platformName == platformName),
+      ),
+      Future.delayed(const Duration(seconds: 10)),
+    ]);
+    return devices!.first.device;
   }
 
   Future<Stream<List<int>>?> _dataStreamFromDevice(
@@ -64,7 +71,9 @@ class BleDeviceImpl implements DeviceRepo {
     String characteristicUUID,
   ) async {
     final characteristic = await _findCharacteristicByUuid(
-        characteristicUUID: characteristicUUID, connectedDevice: device);
+      characteristicUUID: characteristicUUID,
+      connectedDevice: device,
+    );
     return characteristic?.lastValueStream;
   }
 
