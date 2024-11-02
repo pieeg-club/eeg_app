@@ -1,15 +1,17 @@
-import 'package:eeg_app/domain/core/use_case.dart';
-import 'package:eeg_app/domain/repositories/ble_repo.dart';
+import 'package:dartz/dartz.dart';
+import 'package:eeg_app/core/failure.dart';
+import 'package:eeg_app/core/use_case.dart';
+import 'package:eeg_app/domain/repositories/device_repo.dart';
 
 /// A use case that connects to the BLE device.
-class ConnectUseCase implements UseCase<Future<void>, NoParams> {
-  /// Constructs a [ConnectUseCase] with the given [BleRepo].
-  ConnectUseCase(this._bleRepo);
+class ConnectUseCase implements UseCase<Unit, NoParams> {
+  /// Constructs a [ConnectUseCase] with the given [DeviceRepo].
+  ConnectUseCase(this._deviceRepo);
 
-  final BleRepo _bleRepo;
+  final DeviceRepo _deviceRepo;
 
   @override
-  Future<void> call(NoParams params) async {
-    await _bleRepo.connect();
+  Future<Either<Failure, Unit>> call(NoParams params) {
+    return _deviceRepo.connect();
   }
 }

@@ -1,15 +1,17 @@
-import 'package:eeg_app/domain/core/use_case.dart';
-import 'package:eeg_app/domain/repositories/ble_repo.dart';
+import 'package:dartz/dartz.dart';
+import 'package:eeg_app/core/failure.dart';
+import 'package:eeg_app/core/use_case.dart';
+import 'package:eeg_app/domain/repositories/device_repo.dart';
 
 /// A use case that disconnects from the BLE device.
-class DisconnectUseCase implements UseCase<Future<void>, NoParams> {
-  /// Constructs a [DisconnectUseCase] with the given [BleRepo].
-  DisconnectUseCase(this._bleRepo);
+class DisconnectUseCase implements UseCase<Unit, NoParams> {
+  /// Constructs a [DisconnectUseCase] with the given [DeviceRepo].
+  DisconnectUseCase(this._deviceRepo);
 
-  final BleRepo _bleRepo;
+  final DeviceRepo _deviceRepo;
 
   @override
-  Future<void> call(NoParams params) async {
-    await _bleRepo.disconnect();
+  Future<Either<Failure, Unit>> call(NoParams params) {
+    return _deviceRepo.disconnect();
   }
 }

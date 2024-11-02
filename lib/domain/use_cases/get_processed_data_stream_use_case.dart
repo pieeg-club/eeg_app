@@ -1,18 +1,36 @@
-import 'package:eeg_app/domain/core/use_case.dart';
-import 'package:eeg_app/domain/repositories/ble_repo.dart';
+import 'package:dartz/dartz.dart';
+import 'package:eeg_app/core/failure.dart';
+import 'package:eeg_app/core/use_case.dart';
+import 'package:eeg_app/domain/repositories/device_repo.dart';
 
 /// A use case that gets a stream of processed data.
 class GetProcessedDataStreamUseCase
     implements UseCase<Stream<List<List<double>>>, NoParams> {
-  /// Constructs a [GetProcessedDataStreamUseCase] with the given [BleRepo].
-  GetProcessedDataStreamUseCase(this._bleRepo);
+  /// Constructs a [GetProcessedDataStreamUseCase] with the given [DeviceRepo].
+  GetProcessedDataStreamUseCase(this._deviceRepo);
 
-  final BleRepo _bleRepo;
+  final DeviceRepo _deviceRepo;
 
   @override
-  Stream<List<List<double>>> call(NoParams params) async* {
-    await for (final data in _bleRepo.getDataStream()) {
-      yield data;
-    }
+  Future<Either<Failure, Stream<List<List<double>>>>> call(NoParams params) {
+    // Get the data stream result from the repository
+    final dataStreamResult = _deviceRepo.getDataStream();
+
+    // Handle the Either result
+    return Future.value(dataStreamResult.fold(
+      (failure) {
+        // If there's a failure, return an empty stream wrapped in Right
+        return const Right(Stream<List<List<double>>>.empty());
+      },
+      (dataStream) {
+        // Process the data stream
+        final processedDataStream = dataStream.map((data) {
+          return [data.map((e) => e.toDouble()).toList()];
+        });
+
+        // Return the processed data stream wrapped in Right
+        return Right(processedDataStream);
+      },
+    ));
   }
 }
