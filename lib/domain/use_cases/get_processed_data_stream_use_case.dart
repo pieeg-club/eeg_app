@@ -12,9 +12,11 @@ class GetProcessedDataStreamUseCase
   final DeviceRepo _deviceRepo;
 
   @override
-  Future<Either<Failure, Stream<List<List<double>>>>> call(NoParams params) {
+  Future<Either<Failure, Stream<List<List<double>>>>> call(
+    NoParams params,
+  ) async {
     // Get the data stream result from the repository
-    final dataStreamResult = _deviceRepo.getDataStream();
+    final dataStreamResult = await _deviceRepo.getDataStream();
 
     // Handle the Either result
     return Future.value(

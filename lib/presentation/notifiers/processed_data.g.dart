@@ -7,7 +7,7 @@ part of 'processed_data.dart';
 // **************************************************************************
 
 String _$processedDataNotifierHash() =>
-    r'3bbb0d2baea52e68bc906c7af84d5a5f9fd467d9';
+    r'1b111300fa753ab274659eaacb55235432a9bb06';
 
 /// Notifier to store the processed data
 ///

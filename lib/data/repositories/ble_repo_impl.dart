@@ -12,7 +12,6 @@ const _platformName = 'EAREEG';
 /// Implementation of the [DeviceRepo] interface for devices.
 class BleDeviceImpl implements DeviceRepo {
   BluetoothDevice? _connectedDevice;
-  Stream<List<int>>? _dataStream;
 
   @override
   Future<Either<DeviceFailure, Unit>> connect() async {
@@ -20,25 +19,19 @@ class BleDeviceImpl implements DeviceRepo {
       log('Device already connected', stackTrace: StackTrace.current);
       return left(DeviceFailure.failedToConnect(StackTrace.current));
     }
-    final BluetoothDevice device;
+
     try {
-      device = await _scanForDevice(_platformName);
-    } catch (e, s) {
-      log('Failed to scan for device', error: e, stackTrace: s);
-      return left(DeviceFailure.failedToConnect(s));
-    }
-    try {
-      await device.connect();
+      final device = await _scanForDevice(
+        platformName: _platformName,
+        timeout: const Duration(seconds: 5),
+      );
+      await device.connect(timeout: const Duration(seconds: 5));
+      _connectedDevice = device;
+      return right(unit);
     } catch (e, s) {
       log('Failed to connect to device', error: e, stackTrace: s);
       return left(DeviceFailure.failedToConnect(s));
     }
-    _connectedDevice = device;
-    _dataStream = await _dataStreamFromDevice(
-      _connectedDevice!,
-      _characteristicUUID,
-    );
-    return right(unit);
   }
 
   @override
@@ -47,32 +40,57 @@ class BleDeviceImpl implements DeviceRepo {
       log('Device not connected', stackTrace: StackTrace.current);
       return left(DeviceFailure.unconnectedDevice(StackTrace.current));
     }
-    await _connectedDevice!.disconnect();
-    _connectedDevice = null;
-    return right(unit);
+
+    try {
+      await _connectedDevice!.disconnect(timeout: 5);
+      _connectedDevice = null;
+      return right(unit);
+    } catch (e, s) {
+      log('Failed to disconnect from device', error: e, stackTrace: s);
+      return left(DeviceFailure.unknown(s));
+    }
   }
 
   @override
-  Either<DeviceFailure, Stream<List<int>>> getDataStream() {
-    if (_dataStream == null) {
-      log('No data stream available', stackTrace: StackTrace.current);
-      return left(DeviceFailure.noDataStream(StackTrace.current));
+  Future<Either<DeviceFailure, Stream<List<int>>>> getDataStream() async {
+    if (_connectedDevice == null) {
+      log('Device not connected', stackTrace: StackTrace.current);
+      return left(DeviceFailure.unconnectedDevice(StackTrace.current));
     }
-    return right(_dataStream!);
+
+    try {
+      final dataStream = await _dataStreamFromDevice(
+        _connectedDevice!,
+        _characteristicUUID,
+      );
+      return right(dataStream);
+    } catch (e, s) {
+      log('Failed to get data stream', error: e, stackTrace: s);
+      return left(DeviceFailure.noDataStream(s));
+    }
   }
 
-  Future<BluetoothDevice> _scanForDevice(String platformName) async {
-    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 10));
-    final devices = await Future.any<List<ScanResult>?>([
-      FlutterBluePlus.onScanResults.firstWhere(
-        (result) => result.any((r) => r.device.platformName == platformName),
-      ),
-      Future.delayed(const Duration(seconds: 10)),
-    ]);
-    return devices!.first.device;
+  Future<BluetoothDevice> _scanForDevice({
+    required String platformName,
+    required Duration timeout,
+  }) async {
+    await FlutterBluePlus.startScan(
+      timeout: timeout,
+      androidUsesFineLocation: true,
+    );
+    final devices = await FlutterBluePlus.onScanResults
+        .firstWhere(
+          (result) => result.any((r) => r.device.platformName == platformName),
+        )
+        .timeout(timeout);
+
+    final scanResult = devices.firstWhere(
+      (scanResult) => scanResult.device.platformName == platformName,
+    );
+    return scanResult.device;
   }
 
-  Future<Stream<List<int>>?> _dataStreamFromDevice(
+  Future<Stream<List<int>>> _dataStreamFromDevice(
     BluetoothDevice device,
     String characteristicUUID,
   ) async {
@@ -80,7 +98,14 @@ class BleDeviceImpl implements DeviceRepo {
       characteristicUUID: characteristicUUID,
       connectedDevice: device,
     );
-    return characteristic?.lastValueStream;
+
+    if (characteristic == null) {
+      log('Characteristic not found', stackTrace: StackTrace.current);
+      throw Exception('Characteristic not found');
+    }
+
+    await characteristic.setNotifyValue(true);
+    return characteristic.onValueReceived;
   }
 
   Future<BluetoothCharacteristic?> _findCharacteristicByUuid({

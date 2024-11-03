@@ -6,7 +6,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'device_repo_impl_provider.g.dart';
 
 /// A provider that creates a [DeviceRepo].
-@riverpod
+@Riverpod(keepAlive: true)
 DeviceRepo deviceRepo(Ref ref) {
-  return BleDeviceImpl();
+  final bleDeviceImpl = BleDeviceImpl();
+  return bleDeviceImpl;
 }

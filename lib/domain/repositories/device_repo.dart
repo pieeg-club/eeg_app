@@ -10,5 +10,5 @@ abstract class DeviceRepo {
   Future<Either<DeviceFailure, Unit>> disconnect();
 
   /// Returns a stream of data from the connected device.
-  Either<DeviceFailure, Stream<List<int>>> getDataStream();
+  Future<Either<DeviceFailure, Stream<List<int>>>> getDataStream();
 }
