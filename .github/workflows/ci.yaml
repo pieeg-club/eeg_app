@@ -33,6 +33,9 @@ jobs:
 
             - name: Analyze
               run: flutter analyze
+
+            - name: Analyze with riverpod_lint
+              run: dart run custom_lint
             
             - name: Test
               run: flutter test
