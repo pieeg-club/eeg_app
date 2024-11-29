@@ -2,13 +2,13 @@
 class Settings {
   /// Settings constructor
   Settings({
-    required this.bandPathHighCut,
-    required this.bandPathLowCut,
+    required this.bandPassHighCutOff,
+    required this.bandPassLowCutOff,
   });
 
-  /// Band path high cut
-  final double bandPathHighCut;
+  /// Band pass high cut
+  final double bandPassHighCutOff;
 
-  /// Band path low cut
-  final double bandPathLowCut;
+  /// Band pass low cut
+  final double bandPassLowCutOff;
 }
