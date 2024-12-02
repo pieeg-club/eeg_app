@@ -2,7 +2,6 @@ import 'package:eeg_app/core/use_case.dart';
 import 'package:eeg_app/domain/providers/connect_use_case.dart';
 import 'package:eeg_app/domain/providers/disconnect_use_case.dart';
 import 'package:eeg_app/presentation/notifiers/processed_data.dart';
-import 'package:eeg_app/presentation/widgets/settings_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -78,19 +77,6 @@ class MainPage extends ConsumerWidget {
               },
               child: const Text('Disconnect'),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (context) {
-                    return SettingsDialog();
-                  },
-                );
-              },
-              child: const Text('Settings'),
-            ),
-            const SizedBox(height: 20),
             processedData.when(
               data: (data) {
                 return Column(
