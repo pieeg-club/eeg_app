@@ -12,6 +12,7 @@ class Settings {
   /// Band pass low cut
   final double bandPassLowCutOff;
 
+  /// Copy with method
   Settings copyWith({
     double? bandPassHighCutOff,
     double? bandPassLowCutOff,
