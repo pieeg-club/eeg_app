@@ -7,7 +7,7 @@ part 'save_settings_use_case.g.dart';
 
 /// Save settings provider for the use case [SaveSettings]
 @riverpod
-SaveSettings saveSettings(Ref ref) {
+SaveSettings saveSettingsUseCase(Ref ref) {
   final settindsRepo = ref.read(settingsRepoProvider);
   return SaveSettings(settindsRepo);
 }

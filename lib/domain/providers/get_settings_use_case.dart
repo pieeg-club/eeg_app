@@ -7,7 +7,7 @@ part 'get_settings_use_case.g.dart';
 
 /// Get settings provider for the use case [GetSettings]
 @riverpod
-GetSettings saveSettings(Ref ref) {
+GetSettings getSettingsUseCase(Ref ref) {
   final settindsRepo = ref.read(settingsRepoProvider);
   return GetSettings(settindsRepo);
 }
