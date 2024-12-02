@@ -12,7 +12,7 @@ class GetSettings implements UseCase<Settings, NoParams> {
   final SettingsRepo _settingsRepo;
 
   @override
-  Future<Either<Failure, Settings>> call(NoParams params) {
-    return _settingsRepo.getSettings();
+  Future<Either<Failure, Settings>> call(NoParams params) async {
+    return Right(await _settingsRepo.getSettings());
   }
 }

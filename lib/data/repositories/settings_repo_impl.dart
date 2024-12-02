@@ -13,25 +13,20 @@ class SettingsRepoImpl implements SettingsRepo {
   final SharedPreferencesAsync _asyncPrefs;
 
   @override
-  Future<Either<SettingsFailures, Settings>> getSettings() async {
+  Future<Settings> getSettings() async {
     try {
       final bandPassHighCutOff = await _asyncPrefs.getDouble(
-            SettingsList.bandPassHighCutOff.name,
-          ) ??
-          30.0;
-      final bandPassLowCutOff = await _asyncPrefs.getDouble(
-            SettingsList.bandPassLowCutOff.name,
-          ) ??
-          0.0;
-      return right(
-        Settings(
-          bandPassHighCutOff: bandPassHighCutOff,
-          bandPassLowCutOff: bandPassLowCutOff,
-        ),
+        SettingsList.bandPassHighCutOff.name,
       );
-    } catch (e, s) {
-      log('Failed to get settings', error: e, stackTrace: s);
-      return left(SettingsFailures.unknown(s));
+      final bandPassLowCutOff = await _asyncPrefs.getDouble(
+        SettingsList.bandPassLowCutOff.name,
+      );
+      return Settings(
+        bandPassHighCutOff: bandPassHighCutOff!,
+        bandPassLowCutOff: bandPassLowCutOff!,
+      );
+    } catch (e) {
+      return Settings.defaultSettings();
     }
   }
 

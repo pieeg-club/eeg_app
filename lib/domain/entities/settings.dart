@@ -6,6 +6,14 @@ class Settings {
     required this.bandPassLowCutOff,
   });
 
+  /// Default settings
+  factory Settings.defaultSettings() {
+    return Settings(
+      bandPassHighCutOff: 30,
+      bandPassLowCutOff: 0,
+    );
+  }
+
   /// Band pass high cut
   final double bandPassHighCutOff;
 
