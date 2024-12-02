@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'settings_repo_impl_provider.g.dart';
 
 /// A provider that creates a [SettingsRepo].
-@riverpod
+@Riverpod(keepAlive: true)
 SettingsRepo settingsRepo(Ref ref) {
   return SettingsRepoImpl();
 }

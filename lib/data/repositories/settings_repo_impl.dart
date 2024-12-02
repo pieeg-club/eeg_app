@@ -8,15 +8,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Implementation of the settings repository
 class SettingsRepoImpl implements SettingsRepo {
+  /// Constructor for [SettingsRepoImpl]
+  SettingsRepoImpl() : _asyncPrefs = SharedPreferencesAsync();
+  final SharedPreferencesAsync _asyncPrefs;
+
   @override
   Future<Either<SettingsFailures, Settings>> getSettings() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final bandPassHighCutOff = prefs.getDouble(
+      final bandPassHighCutOff = await _asyncPrefs.getDouble(
             SettingsList.bandPassHighCutOff.name,
           ) ??
           30.0;
-      final bandPassLowCutOff = prefs.getDouble(
+      final bandPassLowCutOff = await _asyncPrefs.getDouble(
             SettingsList.bandPassLowCutOff.name,
           ) ??
           0.0;
@@ -41,12 +44,11 @@ class SettingsRepoImpl implements SettingsRepo {
           SettingsFailures.incorrectBandPassCutOffs(StackTrace.current),
         );
       }
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setDouble(
+      await _asyncPrefs.setDouble(
         SettingsList.bandPassHighCutOff.name,
         settings.bandPassHighCutOff,
       );
-      await prefs.setDouble(
+      await _asyncPrefs.setDouble(
         SettingsList.bandPassLowCutOff.name,
         settings.bandPassLowCutOff,
       );
