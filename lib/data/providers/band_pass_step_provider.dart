@@ -8,7 +8,9 @@ part 'band_pass_step_provider.g.dart';
 
 /// Provides the [BandPassStep] as a [ProcessingStepRepo] for the app
 @Riverpod(keepAlive: true)
-ProcessingStepRepo<List<double>, List<double>> bandPassStep(Ref ref) {
+ProcessingStepRepo<List<List<double>>, List<List<double>>> bandPassStep(
+  Ref ref,
+) {
   final settingsRepo = ref.read(settingsRepoProvider);
   return BandPassStep(settingsRepo);
 }

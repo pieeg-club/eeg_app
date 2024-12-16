@@ -1,32 +1,32 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'convert_to_volts_step_provider.dart';
+part of 'split_into_channels_step_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$convertToVoltsHash() => r'fa94732225089f6f75237885ba24a7a904e7eddb';
+String _$splitIntoChannelsHash() => r'6b880e71890b77a14e502978afa3e6b29cf4028a';
 
-/// Provides the [CovertToVoltsStep] as a [ProcessingStepRepo] for the app
-/// to use.
+/// Provider for the [SplitIntoChannelsStep] class.
+/// This provider is used to instantiate the [SplitIntoChannelsStep] class.
 ///
-/// Copied from [convertToVolts].
-@ProviderFor(convertToVolts)
-final convertToVoltsProvider =
-    Provider<ProcessingStepRepo<List<List<double>>, List<List<int>>>>.internal(
-  convertToVolts,
-  name: r'convertToVoltsProvider',
+/// Copied from [splitIntoChannels].
+@ProviderFor(splitIntoChannels)
+final splitIntoChannelsProvider = AutoDisposeProvider<
+    ProcessingStepRepo<List<List<int>>, List<int>>>.internal(
+  splitIntoChannels,
+  name: r'splitIntoChannelsProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$convertToVoltsHash,
+      : _$splitIntoChannelsHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ConvertToVoltsRef
-    = ProviderRef<ProcessingStepRepo<List<List<double>>, List<List<int>>>>;
+typedef SplitIntoChannelsRef
+    = AutoDisposeProviderRef<ProcessingStepRepo<List<List<int>>, List<int>>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

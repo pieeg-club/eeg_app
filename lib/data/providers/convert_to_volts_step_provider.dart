@@ -8,6 +8,8 @@ part 'convert_to_volts_step_provider.g.dart';
 /// Provides the [CovertToVoltsStep] as a [ProcessingStepRepo] for the app
 /// to use.
 @Riverpod(keepAlive: true)
-ProcessingStepRepo<List<double>, List<int>> convertToVolts(Ref ref) {
+ProcessingStepRepo<List<List<double>>, List<List<int>>> convertToVolts(
+  Ref ref,
+) {
   return CovertToVoltsStep();
 }

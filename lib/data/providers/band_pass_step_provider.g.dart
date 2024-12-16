@@ -6,14 +6,14 @@ part of 'band_pass_step_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bandPassStepHash() => r'15beedb6d0d8f05e0e12ad1c5bc60a0448281b89';
+String _$bandPassStepHash() => r'906eac2cec7bad76693dd0417855f1fc9116577a';
 
 /// Provides the [BandPassStep] as a [ProcessingStepRepo] for the app
 ///
 /// Copied from [bandPassStep].
 @ProviderFor(bandPassStep)
-final bandPassStepProvider =
-    Provider<ProcessingStepRepo<List<double>, List<double>>>.internal(
+final bandPassStepProvider = Provider<
+    ProcessingStepRepo<List<List<double>>, List<List<double>>>>.internal(
   bandPassStep,
   name: r'bandPassStepProvider',
   debugGetCreateSourceHash:
@@ -25,6 +25,6 @@ final bandPassStepProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef BandPassStepRef
-    = ProviderRef<ProcessingStepRepo<List<double>, List<double>>>;
+    = ProviderRef<ProcessingStepRepo<List<List<double>>, List<List<double>>>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

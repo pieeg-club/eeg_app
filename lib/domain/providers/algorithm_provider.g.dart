@@ -6,7 +6,7 @@ part of 'algorithm_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$algorithmHash() => r'e5e2680e5cb9d7fc1d349c58ff9faff451f204b3';
+String _$algorithmHash() => r'1fc9d28c972a83cb2cbe528c3fcea1f127a3b32a';
 
 /// A provider that creates a [Algorithm].
 ///

@@ -8,10 +8,11 @@ const double _samplingFrequency = 250;
 const int _order = 5;
 
 /// Band pass filter for the input data
-class BandPassStep implements ProcessingStepRepo<List<double>, List<double>> {
+class BandPassStep
+    implements ProcessingStepRepo<List<List<double>>, List<List<double>>> {
   /// Constructor for the band pass filter
   BandPassStep(this._settings)
-      : _butterworths = List.generate(8, (_) => Butterworth()) {
+      : _butterworths = List.generate(4, (_) => Butterworth()) {
     _initializeBandPassFilters();
   }
 
@@ -19,12 +20,17 @@ class BandPassStep implements ProcessingStepRepo<List<double>, List<double>> {
   final SettingsRepo _settings;
 
   @override
-  Future<Either<ProcessingStepFailure, List<double>>> call(
-    List<double> input,
+  Future<Either<ProcessingStepFailure, List<List<double>>>> call(
+    List<List<double>> input,
   ) async {
-    final output = List<double>.filled(input.length, 0);
-    for (var i = 0; i < input.length; i++) {
-      output[i] = _butterworths[i].filter(input[i]);
+    final output = List<List<double>>.generate(
+      input.length,
+      (_) => List<double>.filled(input[0].length, 0),
+    );
+    for (var channel = 0; channel < input.length; channel++) {
+      for (var i = 0; i < input[channel].length; i++) {
+        output[channel][i] = _butterworths[channel].filter(input[channel][i]);
+      }
     }
     return Right(output);
   }
