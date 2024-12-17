@@ -22,7 +22,7 @@ class Chart extends StatelessWidget {
         height: 200,
         width: 200,
         color: Colors.blue,
-        child: Text('AlgorithmResult'),
+        child: const Text('AlgorithmResult'),
       );
     }
   }

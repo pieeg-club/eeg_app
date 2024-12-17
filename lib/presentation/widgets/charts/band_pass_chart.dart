@@ -60,22 +60,19 @@ class SingleChart extends StatelessWidget {
         width: 300,
         height: 75,
         child: LineChart(
-          duration: const Duration(milliseconds: 0),
           LineChartData(
             lineBarsData: [
               LineChartBarData(
                 dotData: const FlDotData(show: false),
                 barWidth: 0.5,
-                isCurved: false,
                 spots: _spots,
               ),
             ],
             lineTouchData: const LineTouchData(enabled: false),
             gridData: const FlGridData(show: false),
             titlesData: const FlTitlesData(
-              rightTitles:
-                  AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles: AxisTitles(),
+              topTitles: AxisTitles(),
             ),
           ),
         ),

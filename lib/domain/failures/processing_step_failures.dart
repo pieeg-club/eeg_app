@@ -8,7 +8,7 @@ import 'package:eeg_app/core/failure.dart';
 sealed class ProcessingStepFailure extends Failure {
   const ProcessingStepFailure(super.message, super.stackTrace);
 
-  /// Factory constructor for creating a `UnknownProcessingStepFailure` instance.
+  /// Factory constructor for creating a `UnknownProcessingStepFailure` instance
   factory ProcessingStepFailure.unknown(StackTrace stackTrace) =>
       UnknownProcessingStepFailure._(stackTrace);
 }
