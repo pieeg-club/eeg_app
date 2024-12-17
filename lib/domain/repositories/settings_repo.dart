@@ -8,5 +8,5 @@ abstract class SettingsRepo {
   Future<Either<SettingsFailures, Unit>> saveSettings(Settings settings);
 
   /// Get the settings
-  Future<Either<SettingsFailures, Settings>> getSettings();
+  Future<Settings> getSettings();
 }

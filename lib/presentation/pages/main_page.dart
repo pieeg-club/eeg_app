@@ -2,6 +2,7 @@ import 'package:eeg_app/core/use_case.dart';
 import 'package:eeg_app/domain/providers/connect_use_case.dart';
 import 'package:eeg_app/domain/providers/disconnect_use_case.dart';
 import 'package:eeg_app/presentation/notifiers/processed_data.dart';
+import 'package:eeg_app/presentation/widgets/charts/chart.dart';
 import 'package:eeg_app/presentation/widgets/settings_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,11 +94,8 @@ class MainPage extends ConsumerWidget {
             const SizedBox(height: 20),
             processedData.when(
               data: (data) {
-                return Column(
-                  children: List.generate(
-                    data.length,
-                    (i) => Text('Channel $i: ${data[i]}'),
-                  ),
+                return Chart(
+                  data: data,
                 );
               },
               error: (error, stackTrace) => Text('Error: $error'),

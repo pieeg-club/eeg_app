@@ -1,18 +1,21 @@
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/core/use_case.dart';
+import 'package:eeg_app/domain/algorithms/algorithm.dart';
+import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart';
 import 'package:eeg_app/domain/repositories/device_repo.dart';
 
 /// A use case that gets a stream of processed data.
 class GetProcessedDataStreamUseCase
-    implements UseCase<Stream<List<List<double>>>, NoParams> {
+    implements UseCase<Stream<Either<Failure, AlgorithmResult>>, NoParams> {
   /// Constructs a [GetProcessedDataStreamUseCase] with the given [DeviceRepo].
-  GetProcessedDataStreamUseCase(this._deviceRepo);
+  GetProcessedDataStreamUseCase(this._deviceRepo, this._algorithm);
 
   final DeviceRepo _deviceRepo;
+  final Algorithm _algorithm;
 
   @override
-  Future<Either<Failure, Stream<List<List<double>>>>> call(
+  Future<Either<Failure, Stream<Either<Failure, AlgorithmResult>>>> call(
     NoParams params,
   ) async {
     // Get the data stream result from the repository
@@ -21,20 +24,10 @@ class GetProcessedDataStreamUseCase
     // Handle the Either result
     return Future.value(
       dataStreamResult.fold(
-        (failure) {
-          // If there's a failure, return an empty stream wrapped in Right
-          return const Right(Stream<List<List<double>>>.empty());
-        },
-        (dataStream) {
-          // Process the data stream
-          final processedDataStream =
-              dataStream.map<List<List<double>>>((data) {
-            return [data.map((e) => e.toDouble()).toList()];
-          });
-
-          // Return the processed data stream wrapped in Right
-          return Right(processedDataStream);
-        },
+        (failure) => const Right(
+          Stream<Either<Failure, AlgorithmResult>>.empty(),
+        ),
+        (dataStream) => Right(_algorithm(dataStream)),
       ),
     );
   }
