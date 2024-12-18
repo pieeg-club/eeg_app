@@ -22,13 +22,44 @@ class GetProcessedDataStreamUseCase
     final dataStreamResult = await _deviceRepo.getDataStream();
 
     // Handle the Either result
-    return Future.value(
-      dataStreamResult.fold(
-        (failure) => const Right(
-          Stream<Either<Failure, AlgorithmResult>>.empty(),
-        ),
-        (dataStream) => Right(_algorithm(dataStream)),
+    return dataStreamResult.fold(
+      (failure) => const Right(
+        Stream<Either<Failure, AlgorithmResult>>.empty(),
       ),
+      (dataStream) => Right(_processDataStream(dataStream)),
     );
+  }
+
+  Stream<Either<Failure, AlgorithmResult>> _processDataStream(
+    Stream<List<int>> dataStream,
+  ) async* {
+    await for (final rawData in dataStream) {
+      final eitherResult = await _algorithm(rawData);
+
+      // Using `yield*` here allows the folded streams to produce
+      // zero or one values.
+      // For example, if `_algorithm(rawData)` returns an Option.none(),
+      // we won't yield anything.
+
+      // Use fold on the Either
+      yield* eitherResult.fold(
+        (failure) async* {
+          // If it's Left, we have a Failure directly
+          yield Left<Failure, AlgorithmResult>(failure);
+        },
+        (optionResult) async* {
+          // If it's Right(Option), fold over the Option
+          yield* optionResult.fold(
+            () async* {
+              // None case: do nothing and continue
+            },
+            (value) async* {
+              // Some case: yield the AlgorithmResult
+              yield Right<Failure, AlgorithmResult>(value);
+            },
+          );
+        },
+      );
+    }
   }
 }
