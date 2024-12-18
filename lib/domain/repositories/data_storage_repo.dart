@@ -1,16 +1,18 @@
-import 'dart:io';
-
 import 'package:dartz/dartz.dart';
+import 'package:eeg_app/domain/entities/file_info.dart';
 import 'package:eeg_app/domain/failures/data_storage_failures.dart';
 
 /// Represents a repository for saving data.
 /// This is an abstract class that contains a method for saving data.
 abstract class DataStorageRepo {
   /// Saves the given data.
-  Future<Either<DataStorageFailure, Unit>> saveData(List<dynamic> data);
+  Future<Either<DataStorageFailure, Unit>> saveData(String data);
 
-  /// Gets the currently recorded file.
-  Future<Either<DataStorageFailure, File>> getRecordingFile();
+  /// Retrieves info for all files in the storage.
+  Future<Either<DataStorageFailure, List<FileInfo>>> getFilesInfo();
+
+  /// Deletes the file with the given name.
+  Future<Either<DataStorageFailure, Unit>> deleteFile(String fileName);
 
   /// Starts the data storage.
   Future<Either<DataStorageFailure, Unit>> startRecording();
