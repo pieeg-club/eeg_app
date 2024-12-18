@@ -1,6 +1,6 @@
-import 'package:eeg_app/data/providers/band_pass_step_provider.dart';
-import 'package:eeg_app/data/providers/convert_to_volts_step_provider.dart';
-import 'package:eeg_app/data/providers/split_into_channels_step_provider.dart';
+import 'package:eeg_app/data/providers/processing_steps/band_pass_step_provider.dart';
+import 'package:eeg_app/data/providers/processing_steps/convert_to_volts_step_provider.dart';
+import 'package:eeg_app/data/providers/processing_steps/split_into_channels_step_provider.dart';
 import 'package:eeg_app/domain/algorithms/algorithm.dart';
 import 'package:eeg_app/domain/algorithms/band_pass_algorithm.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
