@@ -8,6 +8,7 @@ import 'package:eeg_app/domain/repositories/data_storage_repo.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:synchronized/synchronized.dart';
 
 /// Represents a repository for saving data.
@@ -93,12 +94,35 @@ class DataStorageRepoImpl implements DataStorageRepo {
     return const Right(unit);
   }
 
+  @override
+  Future<Either<DataStorageFailure, Unit>> shareFile(String filePath) async {
+    if (_isRecording) {
+      return Left(
+        DataStorageFailure.recordingInProgress(StackTrace.current),
+      );
+    }
+    try {
+      await _shareFile(filePath);
+      return const Right(unit);
+    } catch (e, s) {
+      log('Error sharing file: $e', stackTrace: s);
+      return Left(DataStorageFailure.failedToShareFile(s));
+    }
+  }
+
+  /// Shares the file with the given path.
+  Future<void> _shareFile(String filePath) async {
+    await _lock.synchronized(() async {
+      await Share.shareXFiles([XFile(filePath)]);
+    });
+  }
+
   /// Appends the provided data to the file.
   Future<void> _saveData({
     required String data,
   }) async {
     await _lock.synchronized(() async {
-      final file = await _getFile();
+      final file = await _getCurrentFile();
       await file.writeAsString(data, mode: FileMode.append);
     });
   }
@@ -107,9 +131,10 @@ class DataStorageRepoImpl implements DataStorageRepo {
   Future<void> _deleteFileByName(String fileName) async {
     // Get the Application Documents Directory
     final directory = await getApplicationDocumentsDirectory();
-    final files = Directory(directory.path).listSync();
 
     await _lock.synchronized(() async {
+      final files = Directory(directory.path).listSync();
+
       for (final entity in files) {
         if (entity is File) {
           // Check if the file's name matches
@@ -149,9 +174,8 @@ class DataStorageRepoImpl implements DataStorageRepo {
     return fileInfos;
   }
 
-  /// Helper method to get the file,
-  /// with an option to flush buffered data to disk.
-  Future<File> _getFile() async {
+  /// Helper method to get the file to write data to.
+  Future<File> _getCurrentFile() async {
     if (_file == null) {
       final appDirectory = await getApplicationDocumentsDirectory();
 

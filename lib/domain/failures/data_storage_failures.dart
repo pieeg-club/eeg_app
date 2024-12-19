@@ -6,6 +6,11 @@ sealed class DataStorageFailure extends Failure {
   const DataStorageFailure(super.message, super.stackTrace);
 
   /// Factory constructor for creating a
+  /// `FailedToShareFileDataStorageFailure` instance
+  factory DataStorageFailure.failedToShareFile(StackTrace stackTrace) =>
+      FailedToShareFileDataStorageFailure._(stackTrace);
+
+  /// Factory constructor for creating a
   /// `FailedToStopRecordingDataStorageFailure` instance
   factory DataStorageFailure.failedToStopRecording(StackTrace stackTrace) =>
       FailedToStopRecordingDataStorageFailure._(stackTrace);
@@ -30,6 +35,13 @@ sealed class DataStorageFailure extends Failure {
   /// Factory constructor for creating a `UnknownSaveDataFailure` instance
   factory DataStorageFailure.unknown(StackTrace stackTrace) =>
       UnknownDataStorageFailure._(stackTrace);
+}
+
+/// Represents a failure with data storage.
+/// This class extends [DataStorageFailure] with a predefined message.
+class FailedToShareFileDataStorageFailure extends DataStorageFailure {
+  const FailedToShareFileDataStorageFailure._(StackTrace stackTrace)
+      : super('Failed to share file', stackTrace);
 }
 
 /// Represents a failure with data storage.
