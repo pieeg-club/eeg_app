@@ -34,31 +34,65 @@ class FilesInfoDialog extends ConsumerWidget {
               return ListTile(
                 title: Text(filesInfo[index].name),
                 subtitle: Text('${filesInfo[index].size} bytes'),
-                trailing: IconButton(
-                  onPressed: () async {
-                    final result = await filesInfoNotifier
-                        .deleteFileInfo(filesInfo[index]);
-                    result.fold(
-                      (failure) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(failure.message),
-                          ),
-                        );
-                      },
-                      (data) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Successfully deleted!'),
-                            duration: Duration(
-                              seconds: 2,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.delete),
+                trailing: SizedBox(
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          final result = await filesInfoNotifier
+                              .shareFile(filesInfo[index]);
+                          result.fold(
+                            (failure) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(failure.message),
+                                ),
+                              );
+                            },
+                            (data) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Successfully shared!'),
+                                  duration: Duration(
+                                    seconds: 2,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.share),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          final result = await filesInfoNotifier
+                              .deleteFileInfo(filesInfo[index]);
+                          result.fold(
+                            (failure) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(failure.message),
+                                ),
+                              );
+                            },
+                            (data) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Successfully deleted!'),
+                                  duration: Duration(
+                                    seconds: 2,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

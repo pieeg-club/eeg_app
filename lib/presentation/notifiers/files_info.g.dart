@@ -6,7 +6,7 @@ part of 'files_info.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$filesInfoNotifierHash() => r'231bc0795ac880eafab0ec0b9f0f3f292011c212';
+String _$filesInfoNotifierHash() => r'ecbc78dc592f920a53c37205d3145ba146c78c49';
 
 /// Notifier for files info
 ///

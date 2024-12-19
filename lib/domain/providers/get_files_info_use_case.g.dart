@@ -9,7 +9,9 @@ part of 'get_files_info_use_case.dart';
 String _$getFilesInfoUseCaseHash() =>
     r'bb8bd112f0bf3341f97292c0771ea4868b690f4d';
 
-/// See also [getFilesInfoUseCase].
+/// Use case to get files info
+///
+/// Copied from [getFilesInfoUseCase].
 @ProviderFor(getFilesInfoUseCase)
 final getFilesInfoUseCaseProvider =
     AutoDisposeProvider<UseCase<List<FileInfo>, NoParams>>.internal(
