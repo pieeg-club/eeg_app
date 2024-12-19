@@ -113,7 +113,10 @@ class DataStorageRepoImpl implements DataStorageRepo {
   /// Shares the file with the given path.
   Future<void> _shareFile(String filePath) async {
     await _lock.synchronized(() async {
-      await Share.shareXFiles([XFile(filePath)]);
+      final result = await Share.shareXFiles([XFile(filePath)]);
+      if (result.status == ShareResultStatus.dismissed) {
+        throw Exception('Share was dismissed');
+      }
     });
   }
 
