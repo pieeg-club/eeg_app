@@ -14,6 +14,9 @@ abstract class DataStorageRepo {
   /// Deletes the file with the given name.
   Future<Either<DataStorageFailure, Unit>> deleteFile(String fileName);
 
+  /// Shares the file with the given path.
+  Future<Either<DataStorageFailure, Unit>> shareFile(String fliePath);
+
   /// Starts the data storage.
   Future<Either<DataStorageFailure, Unit>> startRecording();
 
