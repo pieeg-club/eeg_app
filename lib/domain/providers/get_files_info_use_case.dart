@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'get_files_info_use_case.g.dart';
 
+/// Use case to get files info
 @riverpod
 UseCase<List<FileInfo>, NoParams> getFilesInfoUseCase(Ref ref) {
   final dataStorageRepo = ref.read(dataStorageRepoProvider);

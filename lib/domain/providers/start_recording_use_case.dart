@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'start_recording_use_case.g.dart';
 
+/// Use case for starting recording
 @riverpod
 UseCase<Unit, NoParams> startRecordingUseCase(Ref ref) {
   final dataStorageRepo = ref.read(dataStorageRepoProvider);
