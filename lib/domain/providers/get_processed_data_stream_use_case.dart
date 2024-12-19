@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/core/use_case.dart';
+import 'package:eeg_app/data/providers/data_storage_provider.dart';
 import 'package:eeg_app/data/providers/device_repo_impl_provider.dart';
 import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart';
 import 'package:eeg_app/domain/providers/algorithm_provider.dart';
@@ -18,5 +19,6 @@ UseCase<Stream<Either<Failure, AlgorithmResult>>, NoParams>
 ) {
   final deviceRepo = ref.read(deviceRepoProvider);
   final algorithm = ref.read(algorithmProvider);
-  return GetProcessedDataStreamUseCase(deviceRepo, algorithm);
+  final dataStorageRepo = ref.read(dataStorageRepoProvider);
+  return GetProcessedDataStreamUseCase(deviceRepo, algorithm, dataStorageRepo);
 }

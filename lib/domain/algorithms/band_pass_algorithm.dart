@@ -23,44 +23,48 @@ class BandPassAlgorithm implements Algorithm {
   final _result = BandPassAlgorithmResult([]);
 
   @override
-  Stream<Either<Failure, AlgorithmResult>> call(
-    Stream<List<int>> rawData,
-  ) async* {
-    await for (final data in rawData) {
-      // Step 0: Split data into channels
-      final channelsData = await _splitIntoChannels(data);
-
-      // Step 1: Convert to volts
-      final volts = await _convertToVolts(channelsData.getOrElse(() => []));
-      if (volts.isLeft()) {
-        // Propagate failure if conversion to volts fails
-        yield volts.map((result) => result as AlgorithmResult);
-      }
-
-      // Step 2: Apply band-pass filter
-      final bandPassFiltered = await _bandPassFilter(volts.getOrElse(() => []));
-      if (bandPassFiltered.isLeft()) {
-        // Propagate failure if band-pass filtering fails
-        yield bandPassFiltered.map((result) => result as AlgorithmResult);
-      }
-
-      // Update result with band-pass filtered data
-      for (var channel = 0;
-          channel < bandPassFiltered.getOrElse(() => []).length;
-          channel++) {
-        if (_result.result.length <= channel) {
-          _result.result.add([]);
-        }
-        _result.result[channel]
-            .addAll(bandPassFiltered.getOrElse(() => [])[channel]);
-      }
-
-      if (_result.result[0].length >= 1000) {
-        yield Right(_result);
-        for (var channel = 0; channel < _result.result.length; channel++) {
-          _result.result[channel].removeRange(0, 200);
-        }
-      }
+  Future<Either<Failure, Option<AlgorithmResult>>> call(
+    List<int> rawData,
+  ) async {
+    // Step 0: Split data into channels
+    final channelsData = await _splitIntoChannels(rawData);
+    if (channelsData.isLeft()) {
+      // Propagate failure if splitting into channels fails
+      return Left(channelsData.fold((failure) => failure, (_) => null)!);
     }
+
+    // Step 1: Convert to volts
+    final volts = await _convertToVolts(channelsData.getOrElse(() => []));
+    if (volts.isLeft()) {
+      // Propagate failure if conversion to volts fails
+      return Left(volts.fold((failure) => failure, (_) => null)!);
+    }
+
+    // Step 2: Apply band-pass filter
+    final bandPassFiltered = await _bandPassFilter(volts.getOrElse(() => []));
+    if (bandPassFiltered.isLeft()) {
+      // Propagate failure if band-pass filtering fails
+      return Left(bandPassFiltered.fold((failure) => failure, (_) => null)!);
+    }
+
+    // Update result with band-pass filtered data
+    for (var channel = 0;
+        channel < bandPassFiltered.getOrElse(() => []).length;
+        channel++) {
+      if (_result.result.length <= channel) {
+        _result.result.add([]);
+      }
+      _result.result[channel]
+          .addAll(bandPassFiltered.getOrElse(() => [])[channel]);
+    }
+
+    if (_result.result[0].length >= 1000) {
+      for (var channel = 0; channel < _result.result.length; channel++) {
+        _result.result[channel].removeRange(0, 200);
+      }
+      return Right(some(_result));
+    }
+
+    return Right(none());
   }
 }
