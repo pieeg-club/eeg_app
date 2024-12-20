@@ -70,6 +70,11 @@ class BleDeviceImpl implements DeviceRepo {
     }
   }
 
+  @override
+  Future<Either<DeviceFailure, bool>> isConnected() async {
+    return right(_connectedDevice != null);
+  }
+
   Future<BluetoothDevice> _scanForDevice({
     required String platformName,
     required Duration timeout,
