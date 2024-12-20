@@ -28,9 +28,15 @@ class RecordingButton extends ConsumerWidget {
           icon: isRecording
               ? const Icon(Icons.stop)
               : const Icon(Icons.fiber_manual_record),
-          label: isRecording
-              ? const Text('Stop recording')
-              : const Text('Start recording'),
+          label: SizedBox(
+            width: 75,
+            height: 60,
+            child: Center(
+              child: isRecording
+                  ? const Text('Stop recording')
+                  : const Text('Start recording'),
+            ),
+          ),
         );
       },
     );

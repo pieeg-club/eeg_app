@@ -32,7 +32,13 @@ class ConnectionButton extends ConsumerWidget {
           icon: Icon(
             isConnected ? Icons.bluetooth_disabled : Icons.bluetooth,
           ),
-          label: Text(isConnected ? 'Disconnect' : 'Connect'),
+          label: SizedBox(
+            width: 75,
+            height: 60,
+            child: Center(
+              child: Text(isConnected ? 'Disconnect' : 'Connect'),
+            ),
+          ),
         );
       },
     );
