@@ -22,4 +22,7 @@ abstract class DataStorageRepo {
 
   /// Stops the data storage.
   Future<Either<DataStorageFailure, Unit>> stopRecording();
+
+  /// Checks if the data storage is currently recording.
+  Future<Either<DataStorageFailure, bool>> isRecording();
 }

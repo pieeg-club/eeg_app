@@ -11,4 +11,7 @@ abstract class DeviceRepo {
 
   /// Returns a stream of data from the connected device.
   Future<Either<DeviceFailure, Stream<List<int>>>> getDataStream();
+
+  /// Checks if the device is connected.
+  Future<Either<DeviceFailure, bool>> isConnected();
 }

@@ -110,6 +110,11 @@ class DataStorageRepoImpl implements DataStorageRepo {
     }
   }
 
+  @override
+  Future<Either<DataStorageFailure, bool>> isRecording() async {
+    return Right(_isRecording);
+  }
+
   /// Shares the file with the given path.
   Future<void> _shareFile(String filePath) async {
     await _lock.synchronized(() async {
