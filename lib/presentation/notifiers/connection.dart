@@ -1,9 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/core/use_case.dart';
+import 'package:eeg_app/domain/providers/connect_use_case.dart';
+import 'package:eeg_app/domain/providers/disconnect_use_case.dart';
 import 'package:eeg_app/domain/providers/is_connected_use_case.dart';
-import 'package:eeg_app/domain/providers/start_recording_use_case.dart';
-import 'package:eeg_app/domain/providers/stop_recording_use_case.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'connection.g.dart';
@@ -21,10 +21,10 @@ class ConnectionNotifier extends _$ConnectionNotifier {
     );
   }
 
-  /// Start recording
-  Future<Either<Failure, Unit>> startRecording() async {
-    final startRecordingUseCase = ref.read(startRecordingUseCaseProvider);
-    final result = await startRecordingUseCase(NoParams());
+  /// Connect to the device
+  Future<Either<Failure, Unit>> connect() async {
+    final connectUseCase = ref.read(connectUseCaseProvider);
+    final result = await connectUseCase(NoParams());
     return result.fold(
       (failure) {
         return Left(failure);
@@ -45,10 +45,10 @@ class ConnectionNotifier extends _$ConnectionNotifier {
     );
   }
 
-  /// Stop recording
-  Future<Either<Failure, Unit>> stopRecording() async {
-    final stopRecordingUseCase = ref.read(stopRecordingUseCaseProvider);
-    final result = await stopRecordingUseCase(NoParams());
+  /// Disconnect from the device
+  Future<Either<Failure, Unit>> disconnect() async {
+    final disconnectUseCase = ref.read(disconnectUseCaseProvider);
+    final result = await disconnectUseCase(NoParams());
     return result.fold(
       (failure) {
         return Left(failure);
