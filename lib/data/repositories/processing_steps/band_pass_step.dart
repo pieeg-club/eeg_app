@@ -46,7 +46,7 @@ class BandPassStep
     await _lock.synchronized(() async {
       final settings = await _settings.getSettings();
       _butterworths = List<Butterworth>.generate(
-        4,
+        settings.numberOfChannels,
         (_) => Butterworth(),
       );
       final leftCutOffFreq = settings.bandPassLowCutOff;

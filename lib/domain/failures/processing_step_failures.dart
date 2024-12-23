@@ -8,9 +8,20 @@ import 'package:eeg_app/core/failure.dart';
 sealed class ProcessingStepFailure extends Failure {
   const ProcessingStepFailure(super.message, super.stackTrace);
 
+  /// Factory constructor for creating a `WrongNumberOfChannels` instance
+  factory ProcessingStepFailure.wrongNumberOfChannels(StackTrace stackTrace) =>
+      WrongNumberOfChannels._(stackTrace);
+
   /// Factory constructor for creating a `UnknownProcessingStepFailure` instance
   factory ProcessingStepFailure.unknown(StackTrace stackTrace) =>
       UnknownProcessingStepFailure._(stackTrace);
+}
+
+/// Represents a failure when the processing step fails to process the input.
+/// This class extends [ProcessingStepFailure] with a predefined message.
+class WrongNumberOfChannels extends ProcessingStepFailure {
+  const WrongNumberOfChannels._(StackTrace stackTrace)
+      : super('Probably wrong number of channels', stackTrace);
 }
 
 /// Represents a failure when the processing step fails to process the input.
