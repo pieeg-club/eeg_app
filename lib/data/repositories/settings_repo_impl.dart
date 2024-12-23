@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
@@ -11,6 +12,7 @@ class SettingsRepoImpl implements SettingsRepo {
   /// Constructor for [SettingsRepoImpl]
   SettingsRepoImpl() : _asyncPrefs = SharedPreferencesAsync();
   final SharedPreferencesAsync _asyncPrefs;
+  final _settingsController = StreamController<Settings>.broadcast();
 
   @override
   Future<Settings> getSettings() async {
@@ -47,11 +49,20 @@ class SettingsRepoImpl implements SettingsRepo {
         SettingsList.bandPassLowCutOff.name,
         settings.bandPassLowCutOff,
       );
+
+      _settingsController.add(settings);
+
       return right(unit);
     } catch (e, s) {
       log('Failed to save settings', error: e, stackTrace: s);
       return left(SettingsFailures.unknown(s));
     }
+  }
+
+  @override
+  Stream<Settings> getSettingsStream() async* {
+    yield await getSettings();
+    yield* _settingsController.stream;
   }
 }
 
