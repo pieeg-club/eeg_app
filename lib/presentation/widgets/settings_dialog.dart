@@ -9,6 +9,7 @@ class SettingsDialog extends ConsumerWidget {
 
   final _bandPassHighCutOffController = TextEditingController();
   final _bandPassLowCutOffController = TextEditingController();
+  final _numberOfChannelsController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,6 +19,7 @@ class SettingsDialog extends ConsumerWidget {
       data: (data) {
         _bandPassHighCutOffController.text = data.bandPassHighCutOff.toString();
         _bandPassLowCutOffController.text = data.bandPassLowCutOff.toString();
+        _numberOfChannelsController.text = data.numberOfChannels.toString();
         return AlertDialog(
           title: const Text('Settings'),
           content: Column(
@@ -37,6 +39,13 @@ class SettingsDialog extends ConsumerWidget {
                 ),
                 keyboardType: TextInputType.number,
               ),
+              TextField(
+                controller: _numberOfChannelsController,
+                decoration: const InputDecoration(
+                  labelText: 'Number of Channels',
+                ),
+                keyboardType: TextInputType.number,
+              ),
             ],
           ),
           actions: <Widget>[
@@ -53,6 +62,8 @@ class SettingsDialog extends ConsumerWidget {
                       double.tryParse(_bandPassHighCutOffController.text),
                   bandPassLowCutOff:
                       double.tryParse(_bandPassLowCutOffController.text),
+                  numberOfChannels:
+                      int.tryParse(_numberOfChannelsController.text),
                 );
                 final result = await settingsNotifier.saveSettings(newSettings);
                 result.fold(
