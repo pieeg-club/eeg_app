@@ -23,9 +23,13 @@ class SettingsRepoImpl implements SettingsRepo {
       final bandPassLowCutOff = await _asyncPrefs.getDouble(
         SettingsList.bandPassLowCutOff.name,
       );
+      final numberOfChannels = await _asyncPrefs.getInt(
+        SettingsList.numberOfChannels.name,
+      );
       return Settings(
         bandPassHighCutOff: bandPassHighCutOff!,
         bandPassLowCutOff: bandPassLowCutOff!,
+        numberOfChannels: numberOfChannels!,
       );
     } catch (e) {
       return Settings.defaultSettings();
@@ -48,6 +52,11 @@ class SettingsRepoImpl implements SettingsRepo {
       await _asyncPrefs.setDouble(
         SettingsList.bandPassLowCutOff.name,
         settings.bandPassLowCutOff,
+      );
+
+      await _asyncPrefs.setInt(
+        SettingsList.numberOfChannels.name,
+        settings.numberOfChannels,
       );
 
       _settingsController.add(settings);
@@ -73,4 +82,7 @@ enum SettingsList {
 
   /// The high cut off frequency for the band pass filter
   bandPassLowCutOff,
+
+  /// The number of channels
+  numberOfChannels,
 }
