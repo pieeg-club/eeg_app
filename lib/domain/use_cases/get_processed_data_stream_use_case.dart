@@ -3,6 +3,7 @@ import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/core/use_case.dart';
 import 'package:eeg_app/domain/algorithms/algorithm.dart';
 import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart';
+import 'package:eeg_app/domain/entities/algorithm_results/band_pass_algorithm_result.dart';
 import 'package:eeg_app/domain/entities/settings.dart';
 import 'package:eeg_app/domain/repositories/data_storage_repo.dart';
 import 'package:eeg_app/domain/repositories/device_repo.dart';
@@ -23,7 +24,7 @@ class GetProcessedDataStreamUseCase
   }
 
   late Algorithm _algorithm;
-  final Algorithm _bandPassAlgorithm;
+  final Algorithm<BandPassAlgorithmResult> _bandPassAlgorithm;
   final DeviceRepo _deviceRepo;
   final DataStorageRepo _dataStorageRepo;
   final SettingsRepo _settingsRepo;

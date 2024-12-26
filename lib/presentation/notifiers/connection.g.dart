@@ -7,7 +7,7 @@ part of 'connection.dart';
 // **************************************************************************
 
 String _$connectionNotifierHash() =>
-    r'b4fddca7e11752cff4f6176bae40deadf933090a';
+    r'bd680d17e0a2d4cf40c87dbb9c6a99e900ac607c';
 
 /// Notifier for connection
 ///

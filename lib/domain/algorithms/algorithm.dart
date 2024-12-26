@@ -5,7 +5,7 @@ import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart'
 /// An abstract class that represents an algorithm.
 /// This class is used to define the structure of an algorithm.
 // ignore: one_member_abstracts
-abstract class Algorithm {
+abstract class Algorithm<ResultType extends AlgorithmResult> {
   /// Processes the given raw data.
-  Future<Either<Failure, Option<AlgorithmResult>>> call(List<int> rawData);
+  Future<Either<Failure, Option<ResultType>>> call(List<int> rawData);
 }
