@@ -1,3 +1,4 @@
+import 'package:eeg_app/domain/entities/settings.dart';
 import 'package:eeg_app/presentation/notifiers/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,6 +46,36 @@ class SettingsDialog extends ConsumerWidget {
                   labelText: 'Number of Channels',
                 ),
                 keyboardType: TextInputType.number,
+              ),
+              DropdownButtonFormField<AlgorithmType>(
+                value: data.algorithmType,
+                decoration: const InputDecoration(
+                  labelText: 'Algorithm Type',
+                ),
+                items: AlgorithmType.values.map((type) {
+                  return DropdownMenuItem<AlgorithmType>(
+                    value: type,
+                    child: Text(
+                      _convertIntoUserFriendlyString(type),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  final newSettings = data.copyWith(
+                    bandPassHighCutOff:
+                        double.tryParse(_bandPassHighCutOffController.text),
+                    bandPassLowCutOff:
+                        double.tryParse(_bandPassLowCutOffController.text),
+                    numberOfChannels:
+                        int.tryParse(_numberOfChannelsController.text),
+                    algorithmType: newValue,
+                  );
+                  settingsNotifier.updateSettings(newSettings);
+                },
               ),
             ],
           ),
@@ -97,5 +128,12 @@ class SettingsDialog extends ConsumerWidget {
         );
       },
     );
+  }
+
+  String _convertIntoUserFriendlyString(AlgorithmType type) {
+    switch (type) {
+      case AlgorithmType.bandPass:
+        return 'Band Pass';
+    }
   }
 }

@@ -26,6 +26,11 @@ class SettingsNotifier extends _$SettingsNotifier {
     );
   }
 
+  /// Update the settings
+  void updateSettings(Settings settings) {
+    state = AsyncValue.data(settings);
+  }
+
   /// Save the settings
   ///
   /// [settings] The settings to save
