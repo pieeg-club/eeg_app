@@ -13,7 +13,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_processed_data_stream_use_case.g.dart';
 
 /// A provider that creates a [].
-@riverpod
+@Riverpod(keepAlive: true)
 UseCase<Stream<Either<Failure, AlgorithmResult>>, NoParams>
     getProcessedDataStreamUseCase(
   Ref ref,
