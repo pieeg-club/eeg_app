@@ -26,10 +26,20 @@ class SettingsRepoImpl implements SettingsRepo {
       final numberOfChannels = await _asyncPrefs.getInt(
         SettingsList.numberOfChannels.name,
       );
+      final algorithmTypeString = await _asyncPrefs.getString(
+        SettingsList.algorithmType.name,
+      );
+      final AlgorithmType? algorithmType;
+      if (algorithmTypeString == AlgorithmType.bandPass.name) {
+        algorithmType = AlgorithmType.bandPass;
+      } else {
+        algorithmType = null;
+      }
       return Settings(
         bandPassHighCutOff: bandPassHighCutOff!,
         bandPassLowCutOff: bandPassLowCutOff!,
         numberOfChannels: numberOfChannels!,
+        algorithmType: algorithmType!,
       );
     } catch (e) {
       return Settings.defaultSettings();
@@ -53,10 +63,13 @@ class SettingsRepoImpl implements SettingsRepo {
         SettingsList.bandPassLowCutOff.name,
         settings.bandPassLowCutOff,
       );
-
       await _asyncPrefs.setInt(
         SettingsList.numberOfChannels.name,
         settings.numberOfChannels,
+      );
+      await _asyncPrefs.setString(
+        SettingsList.algorithmType.name,
+        settings.algorithmType.name,
       );
 
       _settingsController.add(settings);
@@ -85,4 +98,7 @@ enum SettingsList {
 
   /// The number of channels
   numberOfChannels,
+
+  /// The algorithm type
+  algorithmType,
 }

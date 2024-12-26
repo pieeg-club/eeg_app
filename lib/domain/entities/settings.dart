@@ -5,6 +5,7 @@ class Settings {
     required this.bandPassHighCutOff,
     required this.bandPassLowCutOff,
     required this.numberOfChannels,
+    required this.algorithmType,
   });
 
   /// Default settings
@@ -13,6 +14,7 @@ class Settings {
       bandPassHighCutOff: 30,
       bandPassLowCutOff: 0.5,
       numberOfChannels: 4,
+      algorithmType: AlgorithmType.bandPass,
     );
   }
 
@@ -25,16 +27,27 @@ class Settings {
   /// Number of channels
   final int numberOfChannels;
 
+  /// Algorithm type
+  final AlgorithmType algorithmType;
+
   /// Copy with method
   Settings copyWith({
     double? bandPassHighCutOff,
     double? bandPassLowCutOff,
     int? numberOfChannels,
+    AlgorithmType? algorithmType,
   }) {
     return Settings(
       bandPassHighCutOff: bandPassHighCutOff ?? this.bandPassHighCutOff,
       bandPassLowCutOff: bandPassLowCutOff ?? this.bandPassLowCutOff,
       numberOfChannels: numberOfChannels ?? this.numberOfChannels,
+      algorithmType: algorithmType ?? this.algorithmType,
     );
   }
+}
+
+/// Algorithm type enum
+enum AlgorithmType {
+  /// Band pass
+  bandPass,
 }
