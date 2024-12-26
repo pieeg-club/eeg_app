@@ -60,6 +60,7 @@ class SingleChart extends StatelessWidget {
         width: 300,
         height: 75,
         child: LineChart(
+          duration: Duration.zero,
           LineChartData(
             lineBarsData: [
               LineChartBarData(

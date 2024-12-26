@@ -9,4 +9,7 @@ abstract class SettingsRepo {
 
   /// Get the settings
   Future<Settings> getSettings();
+
+  /// Get the settings stream
+  Stream<Settings> getSettingsStream();
 }

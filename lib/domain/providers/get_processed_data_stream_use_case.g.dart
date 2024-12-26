@@ -7,7 +7,7 @@ part of 'get_processed_data_stream_use_case.dart';
 // **************************************************************************
 
 String _$getProcessedDataStreamUseCaseHash() =>
-    r'9c2e0c8bffec2f695f292941fc04c41024cf7c54';
+    r'1d07aa186e17095d95b0101502808604e9bea797';
 
 /// A provider that creates a [].
 ///

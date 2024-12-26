@@ -34,6 +34,10 @@ class FilesInfoDialog extends ConsumerWidget {
               return ListTile(
                 title: Text(filesInfo[index].name),
                 subtitle: Text('${filesInfo[index].size} bytes'),
+                leading: Text(
+                  '${index + 1}.',
+                  style: const TextStyle(fontSize: 18),
+                ),
                 trailing: SizedBox(
                   width: 100,
                   child: Row(

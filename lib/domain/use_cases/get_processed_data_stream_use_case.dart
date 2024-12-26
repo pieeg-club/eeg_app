@@ -3,8 +3,12 @@ import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/core/use_case.dart';
 import 'package:eeg_app/domain/algorithms/algorithm.dart';
 import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart';
+import 'package:eeg_app/domain/entities/algorithm_results/band_pass_algorithm_result.dart';
+import 'package:eeg_app/domain/entities/settings.dart';
 import 'package:eeg_app/domain/repositories/data_storage_repo.dart';
 import 'package:eeg_app/domain/repositories/device_repo.dart';
+import 'package:eeg_app/domain/repositories/settings_repo.dart';
+import 'package:synchronized/synchronized.dart';
 
 /// A use case that gets a stream of processed data.
 class GetProcessedDataStreamUseCase
@@ -12,13 +16,19 @@ class GetProcessedDataStreamUseCase
   /// Constructor for the use case.
   GetProcessedDataStreamUseCase(
     this._deviceRepo,
-    this._algorithm,
     this._dataStorageRepo,
-  );
+    this._settingsRepo,
+    this._bandPassAlgorithm,
+  ) {
+    _initializeUseCase();
+  }
 
+  late Algorithm _algorithm;
+  final Algorithm<BandPassAlgorithmResult> _bandPassAlgorithm;
   final DeviceRepo _deviceRepo;
-  final Algorithm _algorithm;
   final DataStorageRepo _dataStorageRepo;
+  final SettingsRepo _settingsRepo;
+  final _lock = Lock();
 
   @override
   Future<Either<Failure, Stream<Either<Failure, AlgorithmResult>>>> call(
@@ -41,7 +51,13 @@ class GetProcessedDataStreamUseCase
   ) async* {
     await for (final rawData in dataStream) {
       await _dataStorageRepo.saveData(rawData.toString());
-      final eitherResult = await _algorithm(rawData);
+      Either<Failure, Option<AlgorithmResult>>? eitherResult;
+      await _lock.synchronized(() async {
+        eitherResult = await _algorithm(rawData);
+      });
+      if (eitherResult == null) {
+        continue;
+      }
 
       // Using `yield*` here allows the folded streams to produce
       // zero or one values.
@@ -49,7 +65,7 @@ class GetProcessedDataStreamUseCase
       // we won't yield anything.
 
       // Use fold on the Either
-      yield* eitherResult.fold(
+      yield* eitherResult!.fold(
         (failure) async* {
           // If it's Left, we have a Failure directly
           yield Left<Failure, AlgorithmResult>(failure);
@@ -67,6 +83,28 @@ class GetProcessedDataStreamUseCase
           );
         },
       );
+    }
+  }
+
+  Future<void> _initializeUseCase() async {
+    // Fetch initial settings
+    final initialSettings = await _settingsRepo.getSettings();
+    await _lock.synchronized(() {
+      _algorithm = _getAlgorithm(initialSettings.algorithmType);
+    });
+
+    // Listen for settings updates and update local variables
+    _settingsRepo.getSettingsStream().listen((settings) async {
+      await _lock.synchronized(() {
+        _algorithm = _getAlgorithm(settings.algorithmType);
+      });
+    });
+  }
+
+  Algorithm _getAlgorithm(AlgorithmType type) {
+    switch (type) {
+      case AlgorithmType.bandPass:
+        return _bandPassAlgorithm;
     }
   }
 }

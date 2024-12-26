@@ -1,14 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/domain/algorithms/algorithm.dart';
-import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart';
 import 'package:eeg_app/domain/entities/algorithm_results/band_pass_algorithm_result.dart';
 import 'package:eeg_app/domain/repositories/processing_step_repo.dart';
 
 /// An algorithm that processes raw data using a band-pass filter.
 /// This algorithm filters out frequencies that are not
 /// within a specified range.
-class BandPassAlgorithm implements Algorithm {
+class BandPassAlgorithm implements Algorithm<BandPassAlgorithmResult> {
   /// Constructs a [BandPassAlgorithm] with the given [ProcessingStepRepo].
   BandPassAlgorithm(
     this._splitIntoChannels,
@@ -23,7 +22,7 @@ class BandPassAlgorithm implements Algorithm {
   final _result = BandPassAlgorithmResult([]);
 
   @override
-  Future<Either<Failure, Option<AlgorithmResult>>> call(
+  Future<Either<Failure, Option<BandPassAlgorithmResult>>> call(
     List<int> rawData,
   ) async {
     // Step 0: Split data into channels

@@ -1,3 +1,4 @@
+import 'package:eeg_app/domain/entities/settings.dart';
 import 'package:eeg_app/presentation/notifiers/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,7 @@ class SettingsDialog extends ConsumerWidget {
 
   final _bandPassHighCutOffController = TextEditingController();
   final _bandPassLowCutOffController = TextEditingController();
+  final _numberOfChannelsController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,6 +20,7 @@ class SettingsDialog extends ConsumerWidget {
       data: (data) {
         _bandPassHighCutOffController.text = data.bandPassHighCutOff.toString();
         _bandPassLowCutOffController.text = data.bandPassLowCutOff.toString();
+        _numberOfChannelsController.text = data.numberOfChannels.toString();
         return AlertDialog(
           title: const Text('Settings'),
           content: Column(
@@ -37,6 +40,43 @@ class SettingsDialog extends ConsumerWidget {
                 ),
                 keyboardType: TextInputType.number,
               ),
+              TextField(
+                controller: _numberOfChannelsController,
+                decoration: const InputDecoration(
+                  labelText: 'Number of Channels',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              DropdownButtonFormField<AlgorithmType>(
+                value: data.algorithmType,
+                decoration: const InputDecoration(
+                  labelText: 'Algorithm Type',
+                ),
+                items: AlgorithmType.values.map((type) {
+                  return DropdownMenuItem<AlgorithmType>(
+                    value: type,
+                    child: Text(
+                      _convertIntoUserFriendlyString(type),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  final newSettings = data.copyWith(
+                    bandPassHighCutOff:
+                        double.tryParse(_bandPassHighCutOffController.text),
+                    bandPassLowCutOff:
+                        double.tryParse(_bandPassLowCutOffController.text),
+                    numberOfChannels:
+                        int.tryParse(_numberOfChannelsController.text),
+                    algorithmType: newValue,
+                  );
+                  settingsNotifier.updateSettings(newSettings);
+                },
+              ),
             ],
           ),
           actions: <Widget>[
@@ -53,6 +93,8 @@ class SettingsDialog extends ConsumerWidget {
                       double.tryParse(_bandPassHighCutOffController.text),
                   bandPassLowCutOff:
                       double.tryParse(_bandPassLowCutOffController.text),
+                  numberOfChannels:
+                      int.tryParse(_numberOfChannelsController.text),
                 );
                 final result = await settingsNotifier.saveSettings(newSettings);
                 result.fold(
@@ -86,5 +128,12 @@ class SettingsDialog extends ConsumerWidget {
         );
       },
     );
+  }
+
+  String _convertIntoUserFriendlyString(AlgorithmType type) {
+    switch (type) {
+      case AlgorithmType.bandPass:
+        return 'Band Pass';
+    }
   }
 }

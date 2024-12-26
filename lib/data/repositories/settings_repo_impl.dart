@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
@@ -11,6 +12,7 @@ class SettingsRepoImpl implements SettingsRepo {
   /// Constructor for [SettingsRepoImpl]
   SettingsRepoImpl() : _asyncPrefs = SharedPreferencesAsync();
   final SharedPreferencesAsync _asyncPrefs;
+  final _settingsController = StreamController<Settings>.broadcast();
 
   @override
   Future<Settings> getSettings() async {
@@ -21,9 +23,23 @@ class SettingsRepoImpl implements SettingsRepo {
       final bandPassLowCutOff = await _asyncPrefs.getDouble(
         SettingsList.bandPassLowCutOff.name,
       );
+      final numberOfChannels = await _asyncPrefs.getInt(
+        SettingsList.numberOfChannels.name,
+      );
+      final algorithmTypeString = await _asyncPrefs.getString(
+        SettingsList.algorithmType.name,
+      );
+      final AlgorithmType? algorithmType;
+      if (algorithmTypeString == AlgorithmType.bandPass.name) {
+        algorithmType = AlgorithmType.bandPass;
+      } else {
+        algorithmType = null;
+      }
       return Settings(
         bandPassHighCutOff: bandPassHighCutOff!,
         bandPassLowCutOff: bandPassLowCutOff!,
+        numberOfChannels: numberOfChannels!,
+        algorithmType: algorithmType!,
       );
     } catch (e) {
       return Settings.defaultSettings();
@@ -47,11 +63,28 @@ class SettingsRepoImpl implements SettingsRepo {
         SettingsList.bandPassLowCutOff.name,
         settings.bandPassLowCutOff,
       );
+      await _asyncPrefs.setInt(
+        SettingsList.numberOfChannels.name,
+        settings.numberOfChannels,
+      );
+      await _asyncPrefs.setString(
+        SettingsList.algorithmType.name,
+        settings.algorithmType.name,
+      );
+
+      _settingsController.add(settings);
+
       return right(unit);
     } catch (e, s) {
       log('Failed to save settings', error: e, stackTrace: s);
       return left(SettingsFailures.unknown(s));
     }
+  }
+
+  @override
+  Stream<Settings> getSettingsStream() async* {
+    yield await getSettings();
+    yield* _settingsController.stream;
   }
 }
 
@@ -62,4 +95,10 @@ enum SettingsList {
 
   /// The high cut off frequency for the band pass filter
   bandPassLowCutOff,
+
+  /// The number of channels
+  numberOfChannels,
+
+  /// The algorithm type
+  algorithmType,
 }
