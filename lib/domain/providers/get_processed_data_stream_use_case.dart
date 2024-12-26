@@ -3,6 +3,7 @@ import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/core/use_case.dart';
 import 'package:eeg_app/data/providers/data_storage_provider.dart';
 import 'package:eeg_app/data/providers/device_repo_impl_provider.dart';
+import 'package:eeg_app/data/providers/settings_repo_impl_provider.dart';
 import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart';
 import 'package:eeg_app/domain/providers/algorithm_provider.dart';
 import 'package:eeg_app/domain/use_cases/get_processed_data_stream_use_case.dart';
@@ -18,7 +19,13 @@ UseCase<Stream<Either<Failure, AlgorithmResult>>, NoParams>
   Ref ref,
 ) {
   final deviceRepo = ref.read(deviceRepoProvider);
-  final algorithm = ref.read(algorithmProvider);
+  final bandPassAlgorithm = ref.read(algorithmProvider);
   final dataStorageRepo = ref.read(dataStorageRepoProvider);
-  return GetProcessedDataStreamUseCase(deviceRepo, algorithm, dataStorageRepo);
+  final settingsRepo = ref.read(settingsRepoProvider);
+  return GetProcessedDataStreamUseCase(
+    deviceRepo,
+    dataStorageRepo,
+    settingsRepo,
+    bandPassAlgorithm,
+  );
 }
