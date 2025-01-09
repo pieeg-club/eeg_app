@@ -6,7 +6,7 @@ import 'package:eeg_app/domain/failures/data_storage_failures.dart';
 /// This is an abstract class that contains a method for saving data.
 abstract class DataStorageRepo {
   /// Saves the given data.
-  Future<Either<DataStorageFailure, Unit>> saveData(String data);
+  Future<Either<DataStorageFailure, Unit>> saveData(List<dynamic> data);
 
   /// Retrieves info for all files in the storage.
   Future<Either<DataStorageFailure, List<FileInfo>>> getFilesInfo();

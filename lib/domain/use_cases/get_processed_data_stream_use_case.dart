@@ -50,7 +50,7 @@ class GetProcessedDataStreamUseCase
     Stream<List<int>> dataStream,
   ) async* {
     await for (final rawData in dataStream) {
-      await _dataStorageRepo.saveData(rawData.toString());
+      await _dataStorageRepo.saveData(rawData);
       Either<Failure, Option<AlgorithmResult>>? eitherResult;
       await _lock.synchronized(() async {
         eitherResult = await _algorithm(rawData);

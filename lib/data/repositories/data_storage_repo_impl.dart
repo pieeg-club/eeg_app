@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:csv/csv.dart';
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/domain/entities/file_info.dart';
 import 'package:eeg_app/domain/failures/data_storage_failures.dart';
@@ -15,17 +16,17 @@ import 'package:synchronized/synchronized.dart';
 class DataStorageRepoImpl implements DataStorageRepo {
   bool _isRecording = false;
   final _lock = Lock();
-  final _buffer = StringBuffer();
-  static const _flushThreshold = 6000;
+  final _buffer = <List<dynamic>>[];
+  static const _flushThreshold = 75;
   File? _file;
 
   @override
-  Future<Either<DataStorageFailure, Unit>> saveData(String data) async {
+  Future<Either<DataStorageFailure, Unit>> saveData(List<dynamic> data) async {
     if (_isRecording) {
       try {
-        _buffer.write(data);
+        _buffer.add(data);
         if (_buffer.length > _flushThreshold) {
-          await _saveData(data: _buffer.toString());
+          await _saveData(data: _buffer);
           _buffer.clear();
         }
       } catch (e, s) {
@@ -81,7 +82,7 @@ class DataStorageRepoImpl implements DataStorageRepo {
     if (_file != null) {
       try {
         if (_buffer.isNotEmpty) {
-          await _saveData(data: _buffer.toString());
+          await _saveData(data: _buffer);
           _buffer.clear();
         }
         await _flushFile(_file!);
@@ -127,11 +128,12 @@ class DataStorageRepoImpl implements DataStorageRepo {
 
   /// Appends the provided data to the file.
   Future<void> _saveData({
-    required String data,
+    required List<List<dynamic>> data,
   }) async {
     await _lock.synchronized(() async {
       final file = await _getCurrentFile();
-      await file.writeAsString(data, mode: FileMode.append);
+      final csvData = '${const ListToCsvConverter().convert(data)}\n';
+      await file.writeAsString(csvData, mode: FileMode.append);
     });
   }
 
@@ -195,7 +197,7 @@ class DataStorageRepoImpl implements DataStorageRepo {
       _file = File(
         path.join(
           appDirectory.path,
-          'eeg_data_$timestamp.txt',
+          'eeg_data_$timestamp.csv',
         ),
       );
     }
