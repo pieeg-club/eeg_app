@@ -7,13 +7,13 @@ part of 'get_processed_data_stream_use_case.dart';
 // **************************************************************************
 
 String _$getProcessedDataStreamUseCaseHash() =>
-    r'1d07aa186e17095d95b0101502808604e9bea797';
+    r'c40e0b5e76b9145bc7e5fc859e0280c1e0dd5c45';
 
 /// A provider that creates a [].
 ///
 /// Copied from [getProcessedDataStreamUseCase].
 @ProviderFor(getProcessedDataStreamUseCase)
-final getProcessedDataStreamUseCaseProvider = AutoDisposeProvider<
+final getProcessedDataStreamUseCaseProvider = Provider<
     UseCase<Stream<Either<Failure, AlgorithmResult>>, NoParams>>.internal(
   getProcessedDataStreamUseCase,
   name: r'getProcessedDataStreamUseCaseProvider',
@@ -26,7 +26,7 @@ final getProcessedDataStreamUseCaseProvider = AutoDisposeProvider<
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef GetProcessedDataStreamUseCaseRef = AutoDisposeProviderRef<
-    UseCase<Stream<Either<Failure, AlgorithmResult>>, NoParams>>;
+typedef GetProcessedDataStreamUseCaseRef
+    = ProviderRef<UseCase<Stream<Either<Failure, AlgorithmResult>>, NoParams>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

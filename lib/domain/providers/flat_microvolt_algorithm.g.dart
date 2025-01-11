@@ -1,32 +1,33 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'band_pass_algorithm.dart';
+part of 'flat_microvolt_algorithm.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bandPassAlgorithmHash() => r'60865355bdbb290d003d43e2d532e154efbc8c8e';
+String _$flatMicrovoltAlgorithmHash() =>
+    r'096fee71cce1a06efe06923547fcfb78018ef0a1';
 
 /// A provider that creates a [Algorithm] that
-/// returns a [BandPassAlgorithmResult].
+/// returns a [FlatMicrovoltAlgorithmResult].
 ///
-/// Copied from [bandPassAlgorithm].
-@ProviderFor(bandPassAlgorithm)
-final bandPassAlgorithmProvider =
-    AutoDisposeProvider<Algorithm<BandPassAlgorithmResult>>.internal(
-  bandPassAlgorithm,
-  name: r'bandPassAlgorithmProvider',
+/// Copied from [flatMicrovoltAlgorithm].
+@ProviderFor(flatMicrovoltAlgorithm)
+final flatMicrovoltAlgorithmProvider =
+    AutoDisposeProvider<Algorithm<FlatMicrovoltAlgorithmResult>>.internal(
+  flatMicrovoltAlgorithm,
+  name: r'flatMicrovoltAlgorithmProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$bandPassAlgorithmHash,
+      : _$flatMicrovoltAlgorithmHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef BandPassAlgorithmRef
-    = AutoDisposeProviderRef<Algorithm<BandPassAlgorithmResult>>;
+typedef FlatMicrovoltAlgorithmRef
+    = AutoDisposeProviderRef<Algorithm<FlatMicrovoltAlgorithmResult>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
