@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:eeg_app/core/failure.dart';
 import 'package:eeg_app/core/use_case.dart';
 import 'package:eeg_app/domain/algorithms/algorithm.dart';
 import 'package:eeg_app/domain/entities/algorithm_results/algorithm_result.dart';
 import 'package:eeg_app/domain/entities/algorithm_results/band_pass_algorithm_result.dart';
+import 'package:eeg_app/domain/entities/algorithm_results/flat_microvolt_algorithm_result.dart';
 import 'package:eeg_app/domain/entities/settings.dart';
 import 'package:eeg_app/domain/repositories/data_storage_repo.dart';
 import 'package:eeg_app/domain/repositories/device_repo.dart';
@@ -19,12 +22,15 @@ class GetProcessedDataStreamUseCase
     this._dataStorageRepo,
     this._settingsRepo,
     this._bandPassAlgorithm,
+    this._flatMicrovoltAlgorithm,
   ) {
     _initializeUseCase();
   }
 
-  late Algorithm _algorithm;
+  late Algorithm _displayAlgorithm;
+  late Algorithm _saveAlgorithm;
   final Algorithm<BandPassAlgorithmResult> _bandPassAlgorithm;
+  final Algorithm<FlatMicrovoltAlgorithmResult> _flatMicrovoltAlgorithm;
   final DeviceRepo _deviceRepo;
   final DataStorageRepo _dataStorageRepo;
   final SettingsRepo _settingsRepo;
@@ -50,21 +56,19 @@ class GetProcessedDataStreamUseCase
     Stream<List<int>> dataStream,
   ) async* {
     await for (final rawData in dataStream) {
-      await _dataStorageRepo.saveData(rawData);
+      await _processAndSave(rawData);
+
       Either<Failure, Option<AlgorithmResult>>? eitherResult;
       await _lock.synchronized(() async {
-        eitherResult = await _algorithm(rawData);
+        eitherResult = await _displayAlgorithm(rawData);
       });
       if (eitherResult == null) {
         continue;
       }
-
       // Using `yield*` here allows the folded streams to produce
       // zero or one values.
       // For example, if `_algorithm(rawData)` returns an Option.none(),
       // we won't yield anything.
-
-      // Use fold on the Either
       yield* eitherResult!.fold(
         (failure) async* {
           // If it's Left, we have a Failure directly
@@ -86,25 +90,58 @@ class GetProcessedDataStreamUseCase
     }
   }
 
+  Future<void> _processAndSave(List<int> rawData) async {
+    Either<Failure, Option<AlgorithmResult>>? result;
+    await _lock.synchronized(() async {
+      result = await _saveAlgorithm(rawData);
+    });
+
+    await result?.fold(
+      (_) async {}, // Failure: do nothing
+      (option) async {
+        await option.fold(
+          () async {}, // None: do nothing
+          (value) async {
+            if (value is FlatMicrovoltAlgorithmResult) {
+              await _dataStorageRepo.saveAllData(value.result);
+            } else {
+              log('Unsupported AlgorithmResult type while saving: $value');
+            }
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _initializeUseCase() async {
     // Fetch initial settings
     final initialSettings = await _settingsRepo.getSettings();
     await _lock.synchronized(() {
-      _algorithm = _getAlgorithm(initialSettings.algorithmType);
+      _displayAlgorithm =
+          _getDisplayAlgorithm(initialSettings.displayAlgorithmType);
+      _saveAlgorithm = _getSaveAlgorithm(initialSettings.saveAlgorithmType);
     });
 
     // Listen for settings updates and update local variables
     _settingsRepo.getSettingsStream().listen((settings) async {
       await _lock.synchronized(() {
-        _algorithm = _getAlgorithm(settings.algorithmType);
+        _displayAlgorithm = _getDisplayAlgorithm(settings.displayAlgorithmType);
+        _saveAlgorithm = _getSaveAlgorithm(settings.saveAlgorithmType);
       });
     });
   }
 
-  Algorithm _getAlgorithm(AlgorithmType type) {
+  Algorithm _getDisplayAlgorithm(DisplayAlgorithmType type) {
     switch (type) {
-      case AlgorithmType.bandPass:
+      case DisplayAlgorithmType.bandPass:
         return _bandPassAlgorithm;
+    }
+  }
+
+  Algorithm _getSaveAlgorithm(SaveAlgorithmType type) {
+    switch (type) {
+      case SaveAlgorithmType.microvolts:
+        return _flatMicrovoltAlgorithm;
     }
   }
 }

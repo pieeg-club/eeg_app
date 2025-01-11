@@ -8,6 +8,11 @@ abstract class DataStorageRepo {
   /// Saves the given data.
   Future<Either<DataStorageFailure, Unit>> saveData(List<dynamic> data);
 
+  /// Saves all the given data.
+  Future<Either<DataStorageFailure, Unit>> saveAllData(
+    List<List<dynamic>> data,
+  );
+
   /// Retrieves info for all files in the storage.
   Future<Either<DataStorageFailure, List<FileInfo>>> getFilesInfo();
 

@@ -5,7 +5,8 @@ class Settings {
     required this.bandPassHighCutOff,
     required this.bandPassLowCutOff,
     required this.numberOfChannels,
-    required this.algorithmType,
+    required this.displayAlgorithmType,
+    required this.saveAlgorithmType,
   });
 
   /// Default settings
@@ -14,7 +15,8 @@ class Settings {
       bandPassHighCutOff: 30,
       bandPassLowCutOff: 0.5,
       numberOfChannels: 4,
-      algorithmType: AlgorithmType.bandPass,
+      displayAlgorithmType: DisplayAlgorithmType.bandPass,
+      saveAlgorithmType: SaveAlgorithmType.microvolts,
     );
   }
 
@@ -27,27 +29,38 @@ class Settings {
   /// Number of channels
   final int numberOfChannels;
 
-  /// Algorithm type
-  final AlgorithmType algorithmType;
+  /// Display algorithm type
+  final DisplayAlgorithmType displayAlgorithmType;
+
+  /// Save algorithm type
+  final SaveAlgorithmType saveAlgorithmType;
 
   /// Copy with method
   Settings copyWith({
     double? bandPassHighCutOff,
     double? bandPassLowCutOff,
     int? numberOfChannels,
-    AlgorithmType? algorithmType,
+    DisplayAlgorithmType? displayAlgorithmType,
+    SaveAlgorithmType? saveAlgorithmType,
   }) {
     return Settings(
       bandPassHighCutOff: bandPassHighCutOff ?? this.bandPassHighCutOff,
       bandPassLowCutOff: bandPassLowCutOff ?? this.bandPassLowCutOff,
       numberOfChannels: numberOfChannels ?? this.numberOfChannels,
-      algorithmType: algorithmType ?? this.algorithmType,
+      displayAlgorithmType: displayAlgorithmType ?? this.displayAlgorithmType,
+      saveAlgorithmType: saveAlgorithmType ?? this.saveAlgorithmType,
     );
   }
 }
 
-/// Algorithm type enum
-enum AlgorithmType {
+/// Dispaly algorithm type enum
+enum DisplayAlgorithmType {
   /// Band pass
   bandPass,
+}
+
+/// Save algorithm type enum
+enum SaveAlgorithmType {
+  /// Band pass
+  microvolts,
 }

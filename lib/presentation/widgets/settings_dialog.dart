@@ -47,16 +47,16 @@ class SettingsDialog extends ConsumerWidget {
                 ),
                 keyboardType: TextInputType.number,
               ),
-              DropdownButtonFormField<AlgorithmType>(
-                value: data.algorithmType,
+              DropdownButtonFormField<DisplayAlgorithmType>(
+                value: data.displayAlgorithmType,
                 decoration: const InputDecoration(
-                  labelText: 'Algorithm Type',
+                  labelText: 'Display Algorithm Type',
                 ),
-                items: AlgorithmType.values.map((type) {
-                  return DropdownMenuItem<AlgorithmType>(
+                items: DisplayAlgorithmType.values.map((type) {
+                  return DropdownMenuItem<DisplayAlgorithmType>(
                     value: type,
                     child: Text(
-                      _convertIntoUserFriendlyString(type),
+                      _convertDisplayAlgorithmTypeIntoUserFriendlyString(type),
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -72,7 +72,37 @@ class SettingsDialog extends ConsumerWidget {
                         double.tryParse(_bandPassLowCutOffController.text),
                     numberOfChannels:
                         int.tryParse(_numberOfChannelsController.text),
-                    algorithmType: newValue,
+                    displayAlgorithmType: newValue,
+                  );
+                  settingsNotifier.updateSettings(newSettings);
+                },
+              ),
+              DropdownButtonFormField<SaveAlgorithmType>(
+                value: data.saveAlgorithmType,
+                decoration: const InputDecoration(
+                  labelText: 'Save Algorithm Type',
+                ),
+                items: SaveAlgorithmType.values.map((type) {
+                  return DropdownMenuItem<SaveAlgorithmType>(
+                    value: type,
+                    child: Text(
+                      _convertSaveAlgorithmTypeIntoUserFriendlyString(type),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  final newSettings = data.copyWith(
+                    bandPassHighCutOff:
+                        double.tryParse(_bandPassHighCutOffController.text),
+                    bandPassLowCutOff:
+                        double.tryParse(_bandPassLowCutOffController.text),
+                    numberOfChannels:
+                        int.tryParse(_numberOfChannelsController.text),
+                    saveAlgorithmType: newValue,
                   );
                   settingsNotifier.updateSettings(newSettings);
                 },
@@ -130,10 +160,21 @@ class SettingsDialog extends ConsumerWidget {
     );
   }
 
-  String _convertIntoUserFriendlyString(AlgorithmType type) {
+  String _convertDisplayAlgorithmTypeIntoUserFriendlyString(
+    DisplayAlgorithmType type,
+  ) {
     switch (type) {
-      case AlgorithmType.bandPass:
+      case DisplayAlgorithmType.bandPass:
         return 'Band Pass';
+    }
+  }
+
+  String _convertSaveAlgorithmTypeIntoUserFriendlyString(
+    SaveAlgorithmType type,
+  ) {
+    switch (type) {
+      case SaveAlgorithmType.microvolts:
+        return 'Microvolts';
     }
   }
 }
