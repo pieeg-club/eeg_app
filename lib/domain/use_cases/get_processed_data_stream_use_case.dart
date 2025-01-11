@@ -103,7 +103,7 @@ class GetProcessedDataStreamUseCase
           () async {}, // None: do nothing
           (value) async {
             if (value is FlatMicrovoltAlgorithmResult) {
-              await _dataStorageRepo.saveData(value.result);
+              await _dataStorageRepo.saveAllData(value.result);
             } else {
               log('Unsupported AlgorithmResult type while saving: $value');
             }

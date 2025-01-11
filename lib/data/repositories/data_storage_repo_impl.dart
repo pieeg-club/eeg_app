@@ -38,6 +38,25 @@ class DataStorageRepoImpl implements DataStorageRepo {
   }
 
   @override
+  Future<Either<DataStorageFailure, Unit>> saveAllData(
+    List<List<dynamic>> data,
+  ) async {
+    if (_isRecording) {
+      try {
+        _buffer.addAll(data);
+        if (_buffer.length > _flushThreshold) {
+          await _saveData(data: _buffer);
+          _buffer.clear();
+        }
+      } catch (e, s) {
+        log('Error saving data: $e', stackTrace: s);
+        return Left(DataStorageFailure.failedToSave(s));
+      }
+    }
+    return const Right(unit);
+  }
+
+  @override
   Future<Either<DataStorageFailure, Unit>> deleteFile(String fileName) async {
     if (_isRecording) {
       return Left(
