@@ -17,29 +17,44 @@ class SettingsRepoImpl implements SettingsRepo {
   @override
   Future<Settings> getSettings() async {
     try {
+      // bandPassHighCutOff
       final bandPassHighCutOff = await _asyncPrefs.getDouble(
         SettingsList.bandPassHighCutOff.name,
       );
+      // bandPassLowCutOff
       final bandPassLowCutOff = await _asyncPrefs.getDouble(
         SettingsList.bandPassLowCutOff.name,
       );
+      // numberOfChannels
       final numberOfChannels = await _asyncPrefs.getInt(
         SettingsList.numberOfChannels.name,
       );
-      final algorithmTypeString = await _asyncPrefs.getString(
-        SettingsList.algorithmType.name,
+      // displayAlgorithmType
+      final displayAlgorithmTypeString = await _asyncPrefs.getString(
+        SettingsList.displayAlgorithmType.name,
       );
-      final AlgorithmType? algorithmType;
-      if (algorithmTypeString == AlgorithmType.bandPass.name) {
-        algorithmType = AlgorithmType.bandPass;
+      final DisplayAlgorithmType? displayAlgorithmType;
+      if (displayAlgorithmTypeString == DisplayAlgorithmType.bandPass.name) {
+        displayAlgorithmType = DisplayAlgorithmType.bandPass;
       } else {
-        algorithmType = null;
+        displayAlgorithmType = null;
+      }
+      // saveAlgorithmType
+      final saveAlgorithmTypeString = await _asyncPrefs.getString(
+        SettingsList.saveAlgorithmType.name,
+      );
+      final SaveAlgorithmType? saveAlgorithmType;
+      if (saveAlgorithmTypeString == SaveAlgorithmType.microvolts.name) {
+        saveAlgorithmType = SaveAlgorithmType.microvolts;
+      } else {
+        saveAlgorithmType = null;
       }
       return Settings(
         bandPassHighCutOff: bandPassHighCutOff!,
         bandPassLowCutOff: bandPassLowCutOff!,
         numberOfChannels: numberOfChannels!,
-        algorithmType: algorithmType!,
+        displayAlgorithmType: displayAlgorithmType!,
+        saveAlgorithmType: saveAlgorithmType!,
       );
     } catch (e) {
       return Settings.defaultSettings();
@@ -68,8 +83,12 @@ class SettingsRepoImpl implements SettingsRepo {
         settings.numberOfChannels,
       );
       await _asyncPrefs.setString(
-        SettingsList.algorithmType.name,
-        settings.algorithmType.name,
+        SettingsList.displayAlgorithmType.name,
+        settings.displayAlgorithmType.name,
+      );
+      await _asyncPrefs.setString(
+        SettingsList.saveAlgorithmType.name,
+        settings.saveAlgorithmType.name,
       );
 
       _settingsController.add(settings);
@@ -99,6 +118,9 @@ enum SettingsList {
   /// The number of channels
   numberOfChannels,
 
-  /// The algorithm type
-  algorithmType,
+  /// The algorithm type to display
+  displayAlgorithmType,
+
+  /// The algorithm type to save
+  saveAlgorithmType,
 }

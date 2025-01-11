@@ -90,20 +90,20 @@ class GetProcessedDataStreamUseCase
     // Fetch initial settings
     final initialSettings = await _settingsRepo.getSettings();
     await _lock.synchronized(() {
-      _algorithm = _getAlgorithm(initialSettings.algorithmType);
+      _algorithm = _getDisplayAlgorithm(initialSettings.displayAlgorithmType);
     });
 
     // Listen for settings updates and update local variables
     _settingsRepo.getSettingsStream().listen((settings) async {
       await _lock.synchronized(() {
-        _algorithm = _getAlgorithm(settings.algorithmType);
+        _algorithm = _getDisplayAlgorithm(settings.displayAlgorithmType);
       });
     });
   }
 
-  Algorithm _getAlgorithm(AlgorithmType type) {
+  Algorithm _getDisplayAlgorithm(DisplayAlgorithmType type) {
     switch (type) {
-      case AlgorithmType.bandPass:
+      case DisplayAlgorithmType.bandPass:
         return _bandPassAlgorithm;
     }
   }
