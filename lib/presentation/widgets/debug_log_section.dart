@@ -1,5 +1,6 @@
 import 'package:eeg_app/presentation/notifiers/debug_log.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// A widget that displays debug logs in an expandable section.
@@ -23,6 +24,28 @@ class DebugLogSection extends ConsumerWidget {
               icon: const Icon(Icons.refresh),
               label: const Text('Refresh'),
             ),
+            const SizedBox(width: 8),
+            TextButton.icon(
+              onPressed: debugLog.when(
+                data: (logs) {
+                  return () {
+                    final fullLog = logs.join('\n');
+                    Clipboard.setData(ClipboardData(text: fullLog));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Logs copied to clipboard'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  };
+                },
+                loading: () => null,
+                error: (_, __) => null,
+              ),
+              icon: const Icon(Icons.copy),
+              label: const Text('Copy All'),
+            ),
+            const SizedBox(width: 16),
           ],
         ),
         debugLog.when(
