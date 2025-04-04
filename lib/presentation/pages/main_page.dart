@@ -1,6 +1,7 @@
 import 'package:eeg_app/presentation/notifiers/processed_data.dart';
 import 'package:eeg_app/presentation/widgets/charts/chart.dart';
 import 'package:eeg_app/presentation/widgets/connection_button.dart';
+import 'package:eeg_app/presentation/widgets/debug_log_section.dart';
 import 'package:eeg_app/presentation/widgets/files_info_dialog.dart';
 import 'package:eeg_app/presentation/widgets/recording_button.dart';
 import 'package:eeg_app/presentation/widgets/settings_dialog.dart';
@@ -91,6 +92,8 @@ class MainPage extends ConsumerWidget {
                   error: (error, stackTrace) => Text('Error: $error'),
                   loading: () => const CircularProgressIndicator(),
                 ),
+                const SizedBox(height: 20),
+                const DebugLogSection(),
               ],
             ),
           ),
