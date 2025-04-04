@@ -13,6 +13,7 @@ const _platformName = 'EAREEG';
 class BleDeviceImpl implements DeviceRepo {
   BluetoothDevice? _connectedDevice;
   final List<String> _lastScanResults = [];
+  String _lastConnectionError = '';
 
   @override
   Future<Either<DeviceFailure, Unit>> connect() async {
@@ -31,6 +32,7 @@ class BleDeviceImpl implements DeviceRepo {
       return right(unit);
     } catch (e, s) {
       log('Failed to connect to device', error: e, stackTrace: s);
+      _lastConnectionError = e.toString();
       return left(DeviceFailure.failedToConnect(s));
     }
   }
@@ -79,6 +81,11 @@ class BleDeviceImpl implements DeviceRepo {
   @override
   Future<Either<DeviceFailure, List<String>>> getLastScanResults() async {
     return right(_lastScanResults);
+  }
+
+  @override
+  Future<Either<DeviceFailure, String>> getLastConnectionError() async {
+    return right(_lastConnectionError);
   }
 
   Future<BluetoothDevice> _scanForDevice({

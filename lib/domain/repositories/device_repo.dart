@@ -17,4 +17,7 @@ abstract class DeviceRepo {
 
   /// Lasrt scan results.
   Future<Either<DeviceFailure, List<String>>> getLastScanResults();
+
+  /// Last connection error.
+  Future<Either<DeviceFailure, String>> getLastConnectionError();
 }

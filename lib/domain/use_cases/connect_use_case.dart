@@ -15,8 +15,16 @@ class ConnectUseCase implements UseCase<Unit, NoParams> {
   @override
   Future<Either<Failure, Unit>> call(NoParams params) async {
     final result = await _deviceRepo.connect();
-    result.fold((failure) {
-      _logRepo.logError(failure.message);
+    await result.fold((failure) async {
+      await _logRepo.logError(failure.message);
+      final errorMessage = await _deviceRepo.getLastConnectionError();
+      errorMessage.fold((failure) {
+        _logRepo.logError(failure.message);
+      }, (data) {
+        _logRepo
+          ..logInfo('Error message retrieved successfully')
+          ..logInfo(data);
+      });
     }, (data) {
       _logRepo.logInfo('Connected to device');
     });
@@ -25,7 +33,7 @@ class ConnectUseCase implements UseCase<Unit, NoParams> {
       _logRepo.logError(failure.message);
     }, (data) {
       _logRepo
-        ..logInfo('Logs retrieved successfully')
+        ..logInfo('Connected devices retrieved successfully')
         ..logInfo(data.toSet().toString());
     });
     return result;
