@@ -12,6 +12,7 @@ const _platformName = 'EAREEG';
 /// Implementation of the [DeviceRepo] interface for devices.
 class BleDeviceImpl implements DeviceRepo {
   BluetoothDevice? _connectedDevice;
+  final List<String> _lastScanResults = [];
 
   @override
   Future<Either<DeviceFailure, Unit>> connect() async {
@@ -23,9 +24,9 @@ class BleDeviceImpl implements DeviceRepo {
     try {
       final device = await _scanForDevice(
         platformName: _platformName,
-        timeout: const Duration(seconds: 5),
+        timeout: const Duration(seconds: 30),
       );
-      await device.connect(timeout: const Duration(seconds: 5));
+      await device.connect(timeout: const Duration(seconds: 10));
       _connectedDevice = device;
       return right(unit);
     } catch (e, s) {
@@ -75,6 +76,11 @@ class BleDeviceImpl implements DeviceRepo {
     return right(_connectedDevice != null);
   }
 
+  @override
+  Future<Either<DeviceFailure, List<String>>> getLastScanResults() async {
+    return right(_lastScanResults);
+  }
+
   Future<BluetoothDevice> _scanForDevice({
     required String platformName,
     required Duration timeout,
@@ -83,11 +89,12 @@ class BleDeviceImpl implements DeviceRepo {
       timeout: timeout,
       androidUsesFineLocation: true,
     );
-    final devices = await FlutterBluePlus.onScanResults
-        .firstWhere(
-          (result) => result.any((r) => r.device.platformName == platformName),
-        )
-        .timeout(timeout);
+    final devices = await FlutterBluePlus.onScanResults.firstWhere(
+      (result) {
+        _lastScanResults.addAll(result.map((r) => r.device.platformName));
+        return result.any((r) => r.device.platformName == platformName);
+      },
+    ).timeout(timeout);
 
     final scanResult = devices.firstWhere(
       (scanResult) => scanResult.device.platformName == platformName,

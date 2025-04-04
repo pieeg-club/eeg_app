@@ -20,6 +20,14 @@ class ConnectUseCase implements UseCase<Unit, NoParams> {
     }, (data) {
       _logRepo.logInfo('Connected to device');
     });
+    final scanResults = await _deviceRepo.getLastScanResults();
+    scanResults.fold((failure) {
+      _logRepo.logError(failure.message);
+    }, (data) {
+      _logRepo
+        ..logInfo('Logs retrieved successfully')
+        ..logInfo(data.toString());
+    });
     return result;
   }
 }

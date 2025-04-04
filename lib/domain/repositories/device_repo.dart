@@ -14,4 +14,7 @@ abstract class DeviceRepo {
 
   /// Checks if the device is connected.
   Future<Either<DeviceFailure, bool>> isConnected();
+
+  /// Lasrt scan results.
+  Future<Either<DeviceFailure, List<String>>> getLastScanResults();
 }
