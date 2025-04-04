@@ -26,7 +26,7 @@ class ConnectUseCase implements UseCase<Unit, NoParams> {
     }, (data) {
       _logRepo
         ..logInfo('Logs retrieved successfully')
-        ..logInfo(data.toString());
+        ..logInfo(data.toSet().toString());
     });
     return result;
   }
